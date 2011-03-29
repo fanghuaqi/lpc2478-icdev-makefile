@@ -20,7 +20,7 @@ RM	= rm
 
 # Tool flags
 CFLAGS  = -I./ -I$(TARGETDIR) -I$(TARGETDIR)/includes  -c -W -Wall -g -mcpu=arm7tdmi
-ASFLAGS = -c -Wa,-ahlms=$*.lst,-mapcs-32
+ASFLAGS = -c -g -Wa,-ahlms=$*.lst,-mapcs-32
 LFLAGS  = -v -nostartfiles --warn-common
 CPFLAGS = -O ihex
 ODFLAGS	= -x --syms
@@ -63,7 +63,7 @@ $(TARGETNAME): $(AOBJS) $(COBJS)
 $(AOBJS) : %.o : %.S
 	@echo
 	@echo Assembling: $<
-	$(CC) $(ASFLAGS) $< -o $@
+	$(CC) $(ASFLAGS) $< -o  $@
 
 # dependency checking
 depend: $(CSRCS)
