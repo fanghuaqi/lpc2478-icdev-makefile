@@ -79,6 +79,7 @@ start:
    /* Added by yecunkui */
    /* Setup a stack for each mode - note that this only sets up a usable stack
 			for User mode.   Also each mode is setup with interrupts initially disabled. */
+ 	msr   CPSR_c, #MODE_SVC|F_BIT | I_BIT		/* Supervisor Mode */
 
    	ldr	  r1, =p_intstack
    	ldr   r0,[r1]
@@ -97,7 +98,7 @@ start:
  	msr	  CPSR_c, #MODE_SYS|I_BIT|F_BIT		/* System Mode	*/
  	mov	  sp, r0
  	sub	  r0, r0, #SYS_STACK_SIZE
- 	msr   CPSR_c, #MODE_SVC|F_BIT		/* Supervisor Mode */
+ 	msr   CPSR_c, #MODE_SVC|F_BIT | I_BIT		/* Supervisor Mode */
  	mov	  sp, r0
 
     /*
@@ -132,7 +133,7 @@ start_1:
     ldr  r1, =__bss_start
     ldr  r2, =__bss_end
     cmp  r1,r2
-    bhs  start_3
+    bhs  start_3         /*r1>=r2 start_3*/
     mov  r0,#0
 start_2:
     str  r0,[r1],#4

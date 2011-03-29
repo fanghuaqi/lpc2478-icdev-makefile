@@ -51,7 +51,7 @@ AOBJS 	= $(ASRCS:.S=.o)
 # Default target	
 all: $(TARGETNAME)
 
-$(TARGETNAME): $(COBJS)	$(AOBJS)
+$(TARGETNAME): $(AOBJS) $(COBJS)	
 	@ echo
 	@ echo Linking: $@.elf
 	$(CC) -T $(LINKFILE) $(LFLAGS) $^ -o $@.elf -Wl,-Map,$@.map,-lgcc,-L$(LSEARCHGCC)
