@@ -38,13 +38,15 @@
 #define I2SCLL_OFFSET        0x14
 #define I2CONCLR_OFFSET      0x18
 /*clock devision*/
-
 #define CLK_DIV_4			 0
 #define CLK_DIV_1			 1
 #define CLK_DIV_2			 2
 #define CLK_DIV_8			 3
 #define I2C_CLK_DIV	         CLK_DIV_1
 #define I2C_PCLK			 (Fcclk/I2C_CLK_DIV)
+/*I2C Read Or Write Define*/
+#define I2C_READ			 1
+#define I2C_WRITE			 0
 
 
 #define BUFSIZE			0x20
@@ -80,9 +82,9 @@
 #define I2SCLH_SCLH			0x00000080  /* I2C SCL Duty Cycle High Reg */
 #define I2SCLL_SCLL			0x00000080  /* I2C SCL Duty Cycle Low Reg */
 
-ERCD 	  I2C_Init(uint8_t I2cChannel, uint16_t I2cMode, uint16_t I2cClk, uint8_t I2cAddress);
-uint8_t   I2C_ReadByte(uint8_t sla);
-uint8_t   I2C_WriteByte(uint8_t sla, uint8_t data);
+ERCD 	  	I2C_Init(uint8_t I2cChannel, uint16_t I2cMode, uint16_t I2cClk, uint8_t I2cAddress);
+uint8_t 	I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr);
+ERCD 		I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cData);
 
 
 #endif
