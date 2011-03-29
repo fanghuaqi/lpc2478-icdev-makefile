@@ -79,8 +79,9 @@ start:
    /* Added by yecunkui */
    /* Setup a stack for each mode - note that this only sets up a usable stack
 			for User mode.   Also each mode is setup with interrupts initially disabled. */
- 	msr   CPSR_c, #MODE_SVC|F_BIT | I_BIT		/* Supervisor Mode */
-
+ 	msr   CPSR_c, #MODE_SVC|F_BIT | I_BIT	    	/* Supervisor Mode */
+    mov  fp, #0                             /* ARM mode frame pointer*/
+    mov  r7, #0        /* Thumb mode frame pointer */
    	ldr	  r1, =p_intstack
    	ldr   r0,[r1]
 	msr   CPSR_c, #MODE_UND|I_BIT|F_BIT 	/* Undefined Instruction Mode  */
@@ -114,8 +115,7 @@ start:
 
     /* ldr  r0, =p_intstack  load stack pointer, p_intstack is bottem of stack */
     /* ldr  sp, [r0]	*/
-    mov  fp, #0        /* ARM mode frame pointer*/
-    mov  r7, #0        /* Thumb mode frame pointer */
+
 
     /*
      *  call hardware_init_hook
