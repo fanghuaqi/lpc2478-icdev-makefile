@@ -26,6 +26,9 @@ typedef  signed   char   int8_t;
 typedef  unsigned char   ERCD;
 
 #define  setreg(regaddr,value)  		 {(*(volatile unsigned long *)(regaddr)) = (value);}
-#define  setregbits(reg,mask,value) 	 {(reg) = ((reg)|(mask))&(value);}
+#define  setregbits(reg,mask,value) 	 {(reg) = ((reg)&(mask))|(value);}
+#define  testequal(regaddr,value) 	 	 ((*(volatile unsigned long *)(regaddr)) == (value))
+#define  getreg(regaddr) 	 	 	     ((*(volatile unsigned long *)(regaddr)))
+#define  MASK_ALL						 0xffffffff
 
 #endif
