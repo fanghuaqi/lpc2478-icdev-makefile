@@ -20,7 +20,7 @@ RM	= rm
 
 # Tool flags
 CFLAGS  = -I./ -I$(TARGETDIR) -I$(TARGETDIR)/includes  -c -W -Wall -g -mcpu=arm7tdmi
-ASFLAGS = -c -g -Wa,-ahlms=$*.lst,-mapcs-32
+ASFLAGS = -c -g -Wa,-ahlms=$*.lst,-mapcs-32 -mcpu=arm7tdmi
 LFLAGS  = -v -nostartfiles --warn-common
 CPFLAGS = -O ihex
 ODFLAGS	= -x --syms
