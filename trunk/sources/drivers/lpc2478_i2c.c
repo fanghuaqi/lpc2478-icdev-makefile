@@ -122,9 +122,11 @@ uint8_t I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr)
 
     while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x58);						/*接收数据，无ACK*/
     data = getreg(i2c_baseAddr + I2DAT_OFFSET) ;								/*读取数据*/
-          
+
+    setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);						/*发送停止位STO*/  /*注意：必须先发数据再清除SI等位*/
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC|I2CONCLR_AAC);
-    setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONSET_STO);						/*发送STO位，停止传输*/
+    while( getreg(i2c_baseAddr + I2CONSET_OFFSET) & I2CONSET_STO );
+
     return data;
 }
 
@@ -176,11 +178,11 @@ ERCD I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cDat
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);						/*清除SI标志*/
    
     while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x28);						/*等待数据传输完毕*/
-    setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);						/*发送停止位*/
+    setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);						/*发送停止位*/  /*注意：必须先发数据再清除SI等位*/
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);						/*清除SI位*/
 
     //for(i = 0;i<8000;i++);
-    while( getreg(i2c_baseAddr + I2CONSET_OFFSET) & I2CONSET_STO );
+    while( getreg(i2c_baseAddr + I2CONSET_OFFSET) & I2CONSET_STO );				/*等待STO置零*/
 
     return ERCD_OK;
 }
