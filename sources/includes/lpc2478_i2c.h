@@ -18,13 +18,13 @@
 #define I2C_CHL1 	1
 #define I2C_CHL2 	2
 /*channel clk definitions*/
-#define	I2C0_CLK	400000
-#define I2C1_CLK 	400000
-#define I2C2_CLK 	400000
+#define	I2C0_CLK	2000
+#define I2C1_CLK 	4000
+#define I2C2_CLK 	4000
 /*channel addr definitions*/
-#define	I2C0_ADDR	0x60
-#define I2C1_ADDR 	0x61
-#define I2C2_ADDR 	0x62
+#define	I2C0_ADDR	0x70
+#define I2C1_ADDR 	0x31
+#define I2C2_ADDR 	0x82
 /*i2c PCONP bit location*/
 #define PCI2C0		7
 #define PCI2C1		19

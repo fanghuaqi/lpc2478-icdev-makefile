@@ -22,6 +22,7 @@ ERCD I2C_Init(uint8_t I2cChannel, uint16_t I2cMode, uint16_t I2cClk, uint8_t I2c
 	uint32_t i2c_baseAddr = 0;
 	uint16_t i2c_clk_temp = 0;
 
+
 	switch (I2cChannel){
 	case I2C_CHL0:
 		i2c_baseAddr = I2C0_BASE_ADDR;
@@ -51,6 +52,10 @@ ERCD I2C_Init(uint8_t I2cChannel, uint16_t I2cMode, uint16_t I2cClk, uint8_t I2c
 		return ERCD_ARG_ERR;
 		break;
 	}
+	setregbits(PINSEL1,~(3<<20),(0x0<<20));  	/*设置p0.26为gpio*/
+	setregbits(FIO3DIR3,~(1<<2),(0x1<<2));  	/*设置地址脚为输出*/
+	//setregbits(FIO3CLR3,0x00,(0x1<<2));			/*设置p0.26输出为低*/
+	FIO3CLR3  = 0x04;
     /*--- Clear flags ---*/
 	setreg(i2c_baseAddr + I2CONCLR_OFFSET,I2CONCLR_AAC | I2CONCLR_SIC | I2CONCLR_STAC | I2CONCLR_I2ENC);
 
@@ -157,18 +162,22 @@ ERCD I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cDat
 	setreg(i2c_baseAddr + I2CONCLR_OFFSET, (I2CONCLR_STAC|I2CONCLR_SIC|I2CONCLR_AAC));
 	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_I2EN);          /*使能I2C作为主机*/
 	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STA);          	/*发送一个起始状态位STA*/
+	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STA);          	/*发送一个起始状态位STA*/
       
 	while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x8);				    		/*起始字必须为0x8*/
 	setreg(i2c_baseAddr + I2DAT_OFFSET, SlaveAddr + I2C_WRITE);    				/*设置读取的从设备的地址*/
 	setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_STAC|I2CONCLR_SIC);			/*清除SI,STR,启动串行传输*/
      
-	while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x18);						/*等待SLA+W传输完毕*/
+	while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x18)
+		{
+		i = getreg(i2c_baseAddr + I2STAT_OFFSET);						/*等待SLA+W传输完毕*/
+		}
     setreg(i2c_baseAddr + I2DAT_OFFSET, I2cData);    								/*设置读取的从设备的地址*/
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);						/*清除SI标志*/
    
     while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x28);						/*等待数据传输完毕*/
-    setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);						/*清除SI位*/
     setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);						/*发送停止位*/
+    setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);						/*清除SI位*/
 
     //for(i = 0;i<8000;i++);
     while( getreg(i2c_baseAddr + I2CONSET_OFFSET) & I2CONSET_STO );
