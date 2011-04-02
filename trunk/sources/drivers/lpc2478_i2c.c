@@ -52,10 +52,7 @@ ERCD I2C_Init(uint8_t I2cChannel, uint16_t I2cMode, uint16_t I2cClk, uint8_t I2c
 		return ERCD_ARG_ERR;
 		break;
 	}
-	setregbits(PINSEL1,~(3<<20),(0x0<<20));  	/*设置p0.26为gpio*/
-	setregbits(FIO3DIR3,~(1<<2),(0x1<<2));  	/*设置地址脚为输出*/
-	//setregbits(FIO3CLR3,0x00,(0x1<<2));			/*设置p0.26输出为低*/
-	FIO3CLR3  = 0x04;
+
     /*--- Clear flags ---*/
 	setreg(i2c_baseAddr + I2CONCLR_OFFSET,I2CONCLR_AAC | I2CONCLR_SIC | I2CONCLR_STAC | I2CONCLR_I2ENC);
 
@@ -170,10 +167,10 @@ ERCD I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cDat
 	setreg(i2c_baseAddr + I2DAT_OFFSET, SlaveAddr + I2C_WRITE);    				/*设置读取的从设备的地址*/
 	setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_STAC|I2CONCLR_SIC);			/*清除SI,STR,启动串行传输*/
      
-	while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x18)
-		{
-		i = getreg(i2c_baseAddr + I2STAT_OFFSET);						/*等待SLA+W传输完毕*/
-		}
+	while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x18)							/*等待SLA+W传输完毕*/
+	{
+		i = getreg(i2c_baseAddr + I2STAT_OFFSET);
+	}
     setreg(i2c_baseAddr + I2DAT_OFFSET, I2cData);    								/*设置读取的从设备的地址*/
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);						/*清除SI标志*/
    

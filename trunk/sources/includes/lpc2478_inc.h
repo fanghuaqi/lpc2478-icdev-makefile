@@ -24,5 +24,13 @@
 #include  "lpc2478_clk.h"
 #include  "lpc2478_hw.h"
 #include  "lpc2478_i2c.h"
+#include  "lpc2478_i2c_cmd.h"
 
 #endif
+
+
+
+
+
+
+
