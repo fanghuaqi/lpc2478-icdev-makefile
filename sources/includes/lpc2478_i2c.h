@@ -12,6 +12,7 @@
 
 #include "lpc2478_inc.h"
 
+/*CH452 interrupt pin*/
 
 /*channel definitions*/
 #define	I2C_CHL0	0

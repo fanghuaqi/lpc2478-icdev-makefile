@@ -43,6 +43,7 @@
 #define CH452_DIG5      0x0d00					// 数码管位5显示,需另加8位数据
 #define CH452_DIG6      0x0e00					// 数码管位6显示,需另加8位数据
 #define CH452_DIG7      0x0f00		            // 数码管位7显示,需另加8位数据
+#define CH452_ACK       0x0700		            // 2线接口ACK
 
 // BCD译码方式下的特殊字符
 #define		CH452_BCD_SPACE		0x10

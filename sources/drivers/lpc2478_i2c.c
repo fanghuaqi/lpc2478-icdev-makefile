@@ -167,10 +167,7 @@ ERCD I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cDat
 	setreg(i2c_baseAddr + I2DAT_OFFSET, SlaveAddr + I2C_WRITE);    				/*设置读取的从设备的地址*/
 	setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_STAC|I2CONCLR_SIC);			/*清除SI,STR,启动串行传输*/
      
-	while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x18)							/*等待SLA+W传输完毕*/
-	{
-		i = getreg(i2c_baseAddr + I2STAT_OFFSET);
-	}
+	while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x18);							/*等待SLA+W传输完毕*/
     setreg(i2c_baseAddr + I2DAT_OFFSET, I2cData);    								/*设置读取的从设备的地址*/
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);						/*清除SI标志*/
    
