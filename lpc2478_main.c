@@ -37,16 +37,16 @@ void main(){
     I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_TWINKLE>>7), 0x00); /*设置不闪烁*/
     
     while(1){
-        if ((FIO0PIN1 & 0x08) == 0x00){
+        if ((IOPIN0 & (1<<11)) == 0x00){
             //UART_Printf("\nKey Pressed!\n");
             temp = I2C_Master_ReadByte(I2C_CHL0, I2C0_ADDR|(CH452_GET_KEY>>7)); /*读按键代码*/
             if (temp & (1<<6)){   /*Key Pressed*/
                 UART_Printf("\nR %d C %d P \n",(temp >> 3)&0x07,temp&0x07);
-                Delay_ms(200);
+                //Delay_ms(200);
             }
             else{    /*No Key Pressed*/
             	UART_Printf("\nR %d C %d R \n",(temp >> 3)&0x07,temp&0x07);
-                Delay_ms(200);
+                //Delay_ms(200);
             }
         }
     	//UART_Printf("\nTest The CH452 Communicatation!\n");
@@ -54,12 +54,13 @@ void main(){
 
     	i = (i>3)?0:i;
     	j = (j>255)?0:j;
-
+    	Delay_ms(100);
     	temp = I2C_Master_ReadByte(I2C_CHL0, I2C0_ADDR|0x10|(i<<1)); /*读seg代码*/
     	//UART_Printf("\nSEG：%d\n",temp);
     	//Delay_ms(100);
 
-    	I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|0x10|(i<<1), j); /*写LED*/
+    	//I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|0x10|(i<<1), j); /*写LED*/
+    	I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_LEVEL>>7), 32);
 
 		temp = I2C_Master_ReadByte(I2C_CHL0, I2C0_ADDR|0x0); /*读芯片版本*/
 		///UART_Printf("\nCH452 Version：%d\n",temp);
