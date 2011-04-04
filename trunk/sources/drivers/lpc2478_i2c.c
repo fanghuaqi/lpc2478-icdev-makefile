@@ -180,3 +180,93 @@ ERCD I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cDat
 
     return ERCD_OK;
 }
+
+/** 
+ * 
+ * 
+ * @param led_mask 
+ * @param colorType LED_OFF LED_RED 
+ * 
+ * @return 
+ */
+ERCD  CH452_LED_OPEN(uint16_t led_mask, uint8_t colorType)
+{
+    uint8_t seg_value[4];
+    if ((led_mask & 0x8000) || (colorType > LED_YELLOW)){
+        return ERCD_ARG_ERR;
+    }
+
+    /*Read the seg value of every DIG 0 - 3*/
+    seg_value[0] = I2C_Master_ReadByte(I2C_CHL0, I2C0_ADDR|(CH452_DIG0>>7));
+    seg_value[1] = I2C_Master_ReadByte(I2C_CHL0, I2C0_ADDR|(CH452_DIG1>>7));
+    seg_value[2] = I2C_Master_ReadByte(I2C_CHL0, I2C0_ADDR|(CH452_DIG2>>7));
+    seg_value[3] = I2C_Master_ReadByte(I2C_CHL0, I2C0_ADDR|(CH452_DIG3>>7));
+                                       
+    switch (colorType){
+        case LED_OFF:
+            seg_value[0] = (seg_value[0] & (~(uint8_t)led_mask)) ;
+            seg_value[1] = (seg_value[1] & (~(uint8_t)led_mask)) ;
+            seg_value[2] = (seg_value[2] & (~(uint8_t)led_mask)) & 0x7f;
+            seg_value[3] = (seg_value[3] & (~(uint8_t)led_mask)) & 0x7f;
+            break;
+        case LED_RED:
+            seg_value[0] = (seg_value[0] & (~(uint8_t)led_mask)) | (uint8_t)led_mask;
+            seg_value[1] = (seg_value[1] & (~(uint8_t)led_mask)) | 0x00;
+            seg_value[2] = ((seg_value[2] & (~(uint8_t)led_mask)) & 0x7f) | (uint8_t)(led_mask>>8);
+            seg_value[3] = ((seg_value[3] & (~(uint8_t)led_mask)) & 0x7f) | 0x00;
+            break;
+        case LED_GREEN:
+            seg_value[0] = (seg_value[0] & (~(uint8_t)led_mask)) ;
+            seg_value[1] = (seg_value[1] & (~(uint8_t)led_mask)) | (uint8_t)led_mask;
+            seg_value[2] = (seg_value[2] & (~(uint8_t)led_mask)) & 0x7f;
+            seg_value[3] = (seg_value[3] & (~(uint8_t)led_mask)) & 0x7f | (uint8_t)(led_mask>>8);
+            break;
+        case LED_YELLOW:
+            seg_value[0] = (seg_value[0] & (~(uint8_t)led_mask)) | (uint8_t)led_mask;
+            seg_value[1] = (seg_value[1] & (~(uint8_t)led_mask)) | (uint8_t)led_mask;
+            seg_value[2] = (seg_value[2] & (~(uint8_t)led_mask)) & 0x7f | (uint8_t)(led_mask>>8);
+            seg_value[3] = (seg_value[3] & (~(uint8_t)led_mask)) & 0x7f | (uint8_t)(led_mask>>8);
+            break;
+        default:
+            return ERCD_ARG_ERR;
+            break;
+    }
+    I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_DIG0>>7),seg_value[0]);
+    I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_DIG1>>7),seg_value[1]);
+    I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_DIG2>>7),seg_value[2]);
+    I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_DIG3>>7),seg_value[3]);
+
+    return ERCD_OK;
+}
+ERCD  CH452_LED_OPEN_SEL(uint8_t led_num, uint8_t colorType)
+{
+    uint8_t col = 0;
+	if ((led_num & 0x10) || (colorType > LED_YELLOW)){
+        return ERCD_ARG_ERR;
+    }
+
+    if (led_num > 7){
+    	led_num = 15 -led_num;
+    	col = 0x10;
+    }
+    else{
+    	led_num = 7 - led_num;
+    	col = 0;
+    }
+
+    if (colorType == LED_OFF){
+    	I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|((CH452_CLR_BIT&0xf00)>>7),(led_num + col + (CH452_CLR_BIT & 0xff)));
+    	I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|((CH452_CLR_BIT&0xf00)>>7),led_num + col + 8 + (CH452_CLR_BIT & 0xff));
+    }else if (colorType == LED_RED){
+    	I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|((CH452_SET_BIT&0xf00)>>7),(led_num + col + (CH452_SET_BIT & 0xff)));
+		I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|((CH452_CLR_BIT&0xf00)>>7),led_num + col + 8+ (CH452_CLR_BIT & 0xff));
+    }else if (colorType == LED_GREEN){
+    	I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|((CH452_CLR_BIT&0xf00)>>7),(led_num + col+ (CH452_CLR_BIT & 0xff)));
+		I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|((CH452_SET_BIT&0xf00)>>7),led_num + col + 8 + (CH452_SET_BIT & 0xff));
+    }else if (colorType == LED_YELLOW){
+    	I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|((CH452_SET_BIT&0xf00)>>7),(led_num + col + (CH452_SET_BIT & 0xff)));
+		I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|((CH452_SET_BIT&0xf00)>>7),led_num  + col + 8 + (CH452_SET_BIT & 0xff) );
+    }
+
+    return ERCD_OK;
+}

@@ -13,7 +13,7 @@ const uint8_t* Hello = "Hello World!\n";
 
 void main(){
 
-	int8_t temp,i,j ;
+	int8_t temp,i,j,k ;
     PLL_Init();
     UART_Init(115200);
 
@@ -35,7 +35,7 @@ void main(){
     I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_SYSON2>>7), (uint8_t)(CH452_SYSON2));/*打开键盘，显示驱动*/
     I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_NO_BCD>>7), 0x00); /*设置非BCD译码,扫描极限为4,显示驱动占空比为100%*/
     I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_TWINKLE>>7), 0x00); /*设置不闪烁*/
-    
+    CH452_LED_OPEN(0x7fff,0);
     while(1){
         if ((IOPIN0 & (1<<11)) == 0x00){
             //UART_Printf("\nKey Pressed!\n");
@@ -60,8 +60,19 @@ void main(){
     	//Delay_ms(100);
 
     	//I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|0x10|(i<<1), j); /*写LED*/
-    	I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_LEVEL>>7), 32);
-
+    	//I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_LEVEL>>7), 32);
+        //CH452_LED_OPEN(0xff,3);
+    	//I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|((CH452_SET_BIT&0x0f00)>>7),CH452_SET_BIT&0xff);
+    	k = (k>15)?0:k;
+    	CH452_LED_OPEN_SEL(k,0);
+    	Delay_ms(500);
+    	CH452_LED_OPEN_SEL(k,1);
+		Delay_ms(500);
+		CH452_LED_OPEN_SEL(k,2);
+		Delay_ms(500);
+		CH452_LED_OPEN_SEL(k,3);
+		Delay_ms(500);
+        //CH452_LED_OPEN(0x0555,2);
 		temp = I2C_Master_ReadByte(I2C_CHL0, I2C0_ADDR|0x0); /*读芯片版本*/
 		///UART_Printf("\nCH452 Version：%d\n",temp);
 		//Delay_ms(100);
@@ -72,6 +83,7 @@ void main(){
 
     	i++;
     	j++;
+    	k++;
     }
     
 }
