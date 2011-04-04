@@ -48,7 +48,11 @@
 /*I2C Read Or Write Define*/
 #define I2C_READ			 1
 #define I2C_WRITE			 0
-
+/*CH452 LED color definitions*/
+#define LED_OFF              0
+#define LED_RED              1
+#define LED_GREEN            2
+#define LED_YELLOW           3
 
 #define BUFSIZE			0x20
 #define MAX_TIMEOUT		0x00FFFFFF
@@ -86,6 +90,8 @@
 ERCD 	  	I2C_Init(uint8_t I2cChannel, uint16_t I2cMode, uint16_t I2cClk, uint8_t I2cAddress);
 uint8_t 	I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr);
 ERCD 		I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cData);
-
+ERCD        CH452_LED_OPEN(uint16_t led_mask, uint8_t colorType);
+ERCD        CH452_LED_OPEN_SEL(uint8_t led_num, uint8_t colorType);
+#define	CH452_CLOSE_ALLLEDS()	I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_LEVEL>>7), 0)
 
 #endif
