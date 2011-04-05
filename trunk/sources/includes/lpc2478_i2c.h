@@ -94,6 +94,10 @@ uint8_t 	I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr);
 ERCD 		I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cData);
 ERCD        CH452_LED_OPEN(uint16_t led_mask, uint8_t colorType);
 ERCD        CH452_LED_OPEN_SEL(uint8_t led_num, uint8_t colorType);
+ERCD 		CH452_Init(void);
+ERCD 		CH452_KeyPress_Signal(void);
+ERCD 		CH452_Set_SegValue(uint8_t *seg_value);
+ERCD 		CH452_Get_SegValue(uint8_t *seg_value);
 #define	CH452_CLOSE_ALLLEDS()	I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_LEVEL>>7), 0)
 
 #endif
