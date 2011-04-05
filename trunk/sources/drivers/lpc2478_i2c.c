@@ -85,8 +85,9 @@ ERCD I2C_Init(uint8_t I2cChannel, uint16_t I2cMode, uint16_t I2cClk, uint8_t I2c
  */
 uint8_t I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr)
 {
-    uint8_t data;
+    uint16_t timeout = 0;
     uint32_t i2c_baseAddr = 0;
+    uint8_t i2c_data;
 
 	switch (I2cChannel){
 	case I2C_CHL0:
@@ -106,27 +107,42 @@ uint8_t I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr)
 		break;
 	}
 	setreg(i2c_baseAddr + I2CONCLR_OFFSET, (I2CONCLR_STAC|I2CONCLR_SIC|I2CONCLR_AAC));
-	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_I2EN);          /*使能I2C作为主机*/
-	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STA);          	/*发送一个起始状态位STA*/
+	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_I2EN);       			    /*使能I2C作为主机*/
+	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STA);        			  	/*发送一个起始状态位STA*/
 
-    while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x8)	    	/*起始字必须为0x8*/
+    while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x8)	    					/*起始字必须为0x8*/
     {
-    	data = getreg(i2c_baseAddr + I2STAT_OFFSET);
+    	timeout ++;
+    	if (timeout > MAX_TIMEOUT){
+    		return ERCD_I2C_BUS_ERR;
+    	}
     }
     setreg(i2c_baseAddr + I2DAT_OFFSET, SlaveAddr + I2C_READ);    				/*设置读取的从设备的地址*/
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_STAC|I2CONCLR_SIC);			/*清除SI,STR,启动串行传输*/
           
-    while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x40);				    	/*起始字必须为0x8*/
+    while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x40)				    		/*起始字必须为0x8*/
+    {
+    	timeout ++;
+		if (timeout > MAX_TIMEOUT){
+			return ERCD_I2C_BUS_ERR;
+		}
+    }
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);						/*清除SI位，准备读取数据*/
 
-    while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x58);						/*接收数据，无ACK*/
-    data = getreg(i2c_baseAddr + I2DAT_OFFSET) ;								/*读取数据*/
+    while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x58)							/*接收数据，无ACK*/
+    {
+    	timeout ++;
+		if (timeout > MAX_TIMEOUT){
+			return ERCD_I2C_BUS_ERR;
+		}
+    }
+    i2c_data = getreg(i2c_baseAddr + I2DAT_OFFSET) ;
 
     setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);						/*发送停止位STO*/  /*注意：必须先发数据再清除SI等位*/
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC|I2CONCLR_AAC);
     while( getreg(i2c_baseAddr + I2CONSET_OFFSET) & I2CONSET_STO );
 
-    return data;
+    return i2c_data;
 }
 
 /** 
@@ -139,8 +155,8 @@ uint8_t I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr)
  */
 ERCD I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cData)
 {
-    uint16_t i = 0;
     uint32_t i2c_baseAddr = 0;
+    uint16_t timeout = 0;
 
 	switch (I2cChannel){
 	case I2C_CHL0:
@@ -165,19 +181,36 @@ ERCD I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cDat
 	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STA);          	/*发送一个起始状态位STA*/
 	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STA);          	/*发送一个起始状态位STA*/
       
-	while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x8);				    		/*起始字必须为0x8*/
+	while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x8) 				    		/*起始字必须为0x8*/
+	{
+    	timeout ++;
+		if (timeout > MAX_TIMEOUT){
+			return ERCD_I2C_BUS_ERR;
+		}
+	}
 	setreg(i2c_baseAddr + I2DAT_OFFSET, SlaveAddr + I2C_WRITE);    				/*设置读取的从设备的地址*/
 	setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_STAC|I2CONCLR_SIC);			/*清除SI,STR,启动串行传输*/
      
-	while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x18);							/*等待SLA+W传输完毕*/
+	while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x18)//;							/*等待SLA+W传输完毕*/
+	{
+    	timeout ++;
+		if (timeout > MAX_TIMEOUT){
+			return ERCD_I2C_BUS_ERR;
+		}
+	}
     setreg(i2c_baseAddr + I2DAT_OFFSET, I2cData);    								/*设置读取的从设备的地址*/
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);						/*清除SI标志*/
    
-    while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x28);						/*等待数据传输完毕*/
+    while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x28)//;						/*等待数据传输完毕*/
+    {
+    	timeout ++;
+		if (timeout > MAX_TIMEOUT){
+			return ERCD_I2C_BUS_ERR;
+		}
+    }
     setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);						/*发送停止位*/  /*注意：必须先发数据再清除SI等位*/
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);						/*清除SI位*/
 
-    //for(i = 0;i<8000;i++);
     while( getreg(i2c_baseAddr + I2CONSET_OFFSET) & I2CONSET_STO );				/*等待STO置零*/
 
     return ERCD_OK;

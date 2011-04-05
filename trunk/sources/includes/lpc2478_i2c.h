@@ -55,7 +55,7 @@
 #define LED_YELLOW           3
 
 #define BUFSIZE			0x20
-#define MAX_TIMEOUT		0x00FFFFFF
+#define MAX_TIMEOUT		50000
 
 #define WCH452_ADDR     0x60
 

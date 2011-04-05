@@ -14,7 +14,8 @@
 
 #include "lpc2478_inc.h"
 
-#define	ERCD_OK	    	0
-#define ERCD_ARG_ERR	1
+#define	ERCD_OK	    		0
+#define ERCD_ARG_ERR		1
+#define ERCD_I2C_BUS_ERR	2
 
 #endif
