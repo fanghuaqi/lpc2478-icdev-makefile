@@ -266,3 +266,42 @@ ERCD  CH452_LED_OPEN_SEL(uint8_t led_num, uint8_t colorType)
 
     return ERCD_OK;
 }
+
+ERCD CH452_Init(void)
+{
+    I2C_Master_WriteByte(I2C_CHL0, CH452_ACK_CMD, CH452_ACK_DATA); 				/*选择CH452的2线接口ACK。这个必须最先发出去*/
+    I2C_Master_WriteByte(I2C_CHL0, CH452_SYSON2_CMD, CH452_SYSON2_DATA);		/*打开键盘，显示驱动*/
+    I2C_Master_WriteByte(I2C_CHL0, CH452_NO_BCD_CMD, 0x40); 					/*设置非BCD译码,扫描极限为4,显示驱动占空比为100%*/
+    I2C_Master_WriteByte(I2C_CHL0, CH452_TWINKLE_CMD, 0x00); 					/*设置不闪烁*/
+    CH452_LED_OPEN(0x7fff,0);													/*关闭所有CH452上的LED*/
+    return ERCD_OK;
+}
+
+ERCD CH452_Get_SegValue(uint8_t *seg_value)
+{
+	seg_value[0] = I2C_Master_ReadByte(I2C_CHL0, CH452_DIG0_CMD);
+	seg_value[1] = I2C_Master_ReadByte(I2C_CHL0, CH452_DIG1_CMD);
+	seg_value[2] = I2C_Master_ReadByte(I2C_CHL0, CH452_DIG2_CMD);
+	seg_value[3] = I2C_Master_ReadByte(I2C_CHL0, CH452_DIG3_CMD);
+	return ERCD_OK;
+}
+ERCD CH452_Set_SegValue(uint8_t *seg_value)
+{
+    I2C_Master_WriteByte(I2C_CHL0, CH452_DIG0_CMD, seg_value[0]|CH452_DIG0_DATA);
+    I2C_Master_WriteByte(I2C_CHL0, CH452_DIG1_CMD, seg_value[1]|CH452_DIG1_DATA);
+    I2C_Master_WriteByte(I2C_CHL0, CH452_DIG2_CMD, seg_value[2]|CH452_DIG2_DATA);
+    I2C_Master_WriteByte(I2C_CHL0, CH452_DIG3_CMD, seg_value[3]|CH452_DIG3_DATA);
+	return ERCD_OK;
+}
+ERCD CH452_KeyPress_Signal(void)
+{
+	uint8_t seg_value[4];
+	uint8_t cnt = 0;
+
+	CH452_Get_SegValue(&seg_value[0]);
+	for (cnt = 0; cnt < 32; cnt ++){
+		I2C_Master_WriteByte(I2C_CHL0, CH452_LEVEL_CMD, cnt|CH452_LEVEL_DATA);
+		Delay_ms(25);
+	}
+	CH452_Set_SegValue(&seg_value[0]);
+}

@@ -64,7 +64,9 @@
 #define HIGHEST_PRIORITY	0x01
 #define LOWEST_PRIORITY		0x0F
 
+
 ERCD install_irq( uint16_t IntNumber, void *HandlerAddr, uint16_t Priority );
-ERCD EXT3_Int_Init(uint8_t port, uint8_t port_no, uint8_t int_edge);
-extern void  EXT3_ISR (void) __attribute__ ((interrupt("IRQ")));
+ERCD EINT3_Init(uint8_t port, uint8_t port_no, uint8_t int_edge);
+ERCD EINT0_Init(uint8_t int_edge, uint8_t int_prio);
+extern void  EINT0_ISR (void) __attribute__ ((interrupt("IRQ")));
 #endif /* LPC2478_IRQ_H_ */
