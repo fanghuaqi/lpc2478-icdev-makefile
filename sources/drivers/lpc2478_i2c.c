@@ -114,7 +114,8 @@ uint8_t I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr)
     {
     	timeout ++;
     	if (timeout > MAX_TIMEOUT){
-    		return ERCD_I2C_BUS_ERR;
+    		//return ERCD_I2C_BUS_ERR;
+    		goto TIMEOUT_ROUTINE;
     	}
     }
     setreg(i2c_baseAddr + I2DAT_OFFSET, SlaveAddr + I2C_READ);    				/*设置读取的从设备的地址*/
@@ -124,7 +125,8 @@ uint8_t I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr)
     {
     	timeout ++;
 		if (timeout > MAX_TIMEOUT){
-			return ERCD_I2C_BUS_ERR;
+			//return ERCD_I2C_BUS_ERR;
+			goto TIMEOUT_ROUTINE;
 		}
     }
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);						/*清除SI位，准备读取数据*/
@@ -133,7 +135,8 @@ uint8_t I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr)
     {
     	timeout ++;
 		if (timeout > MAX_TIMEOUT){
-			return ERCD_I2C_BUS_ERR;
+			//return ERCD_I2C_BUS_ERR;
+			goto TIMEOUT_ROUTINE;
 		}
     }
     i2c_data = getreg(i2c_baseAddr + I2DAT_OFFSET) ;
@@ -143,6 +146,12 @@ uint8_t I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr)
     while( getreg(i2c_baseAddr + I2CONSET_OFFSET) & I2CONSET_STO );
 
     return i2c_data;
+
+TIMEOUT_ROUTINE:
+//	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);						/*发送停止位STO*/  /*注意：必须先发数据再清除SI等位*/
+//    setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC|I2CONCLR_AAC);
+//    while( getreg(i2c_baseAddr + I2CONSET_OFFSET) & I2CONSET_STO );
+    return ERCD_I2C_BUS_ERR;
 }
 
 /** 
@@ -185,7 +194,8 @@ ERCD I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cDat
 	{
     	timeout ++;
 		if (timeout > MAX_TIMEOUT){
-			return ERCD_I2C_BUS_ERR;
+			//return ERCD_I2C_BUS_ERR;
+			goto TIMEOUT_ROUTINE;
 		}
 	}
 	setreg(i2c_baseAddr + I2DAT_OFFSET, SlaveAddr + I2C_WRITE);    				/*设置读取的从设备的地址*/
@@ -195,7 +205,8 @@ ERCD I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cDat
 	{
     	timeout ++;
 		if (timeout > MAX_TIMEOUT){
-			return ERCD_I2C_BUS_ERR;
+			//return ERCD_I2C_BUS_ERR;
+			goto TIMEOUT_ROUTINE;
 		}
 	}
     setreg(i2c_baseAddr + I2DAT_OFFSET, I2cData);    								/*设置读取的从设备的地址*/
@@ -205,7 +216,8 @@ ERCD I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cDat
     {
     	timeout ++;
 		if (timeout > MAX_TIMEOUT){
-			return ERCD_I2C_BUS_ERR;
+			//return ERCD_I2C_BUS_ERR;
+			goto TIMEOUT_ROUTINE;
 		}
     }
     setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);						/*发送停止位*/  /*注意：必须先发数据再清除SI等位*/
@@ -214,6 +226,12 @@ ERCD I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cDat
     while( getreg(i2c_baseAddr + I2CONSET_OFFSET) & I2CONSET_STO );				/*等待STO置零*/
 
     return ERCD_OK;
+
+TIMEOUT_ROUTINE:
+//	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);						/*发送停止位STO*/  /*注意：必须先发数据再清除SI等位*/
+//	setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC|I2CONCLR_AAC);
+//	while( getreg(i2c_baseAddr + I2CONSET_OFFSET) & I2CONSET_STO );
+	return ERCD_I2C_BUS_ERR;
 }
 
 /** 
@@ -337,4 +355,5 @@ ERCD CH452_KeyPress_Signal(void)
 		Delay_ms(25);
 	}
 	CH452_Set_SegValue(&seg_value[0]);
+	return ERCD_OK;
 }
