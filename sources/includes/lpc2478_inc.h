@@ -25,6 +25,7 @@
 #include  "lpc2478_hw.h"
 #include  "lpc2478_i2c.h"
 #include  "lpc2478_i2c_cmd.h"
+#include  "lpc2478_irq.h"
 
 #endif
 

@@ -99,7 +99,7 @@ start:
  	msr	  CPSR_c, #MODE_SYS|I_BIT|F_BIT		/* System Mode	*/
  	mov	  sp, r0
  	sub	  r0, r0, #SYS_STACK_SIZE
- 	msr   CPSR_c, #MODE_SVC|F_BIT | I_BIT		/* Supervisor Mode */
+ 	msr   CPSR_c, #MODE_SVC|F_BIT 		/* Supervisor Mode */
  	mov	  sp, r0
 
     /*
