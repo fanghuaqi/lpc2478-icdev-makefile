@@ -39,7 +39,7 @@ LINKFILE	= lpc2478_ram.ld
 # C source files
 CSRCS = lpc2478_main.c\
 		$(TARGETDIR)/drivers/lpc2478_clk.c $(TARGETDIR)/drivers/lpc2478_hw.c $(TARGETDIR)/drivers/lpc2478_i2c.c $(TARGETDIR)/drivers/lpc2478_uart.c\
-		$(TARGETDIR)/drivers/lpc2478_irq.c $(TARGETDIR)/common/lpc2478_cpatch.c $(TARGETDIR)/common/lpc2478_target.c 
+		$(TARGETDIR)/drivers/lpc2478_irq.c $(TARGETDIR)/drivers/lpc2478_lcd.c $(TARGETDIR)/common/lpc2478_cpatch.c $(TARGETDIR)/common/lpc2478_target.c 
 
 # Assembler source files				
 ASRCS = start.S
