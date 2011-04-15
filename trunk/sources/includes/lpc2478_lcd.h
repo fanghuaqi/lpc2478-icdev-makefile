@@ -25,13 +25,13 @@
 #define LCD_CSC PINSEL4
 #define LCD_DATA_BUS PINSEL4
 
-#define LCD_DISPLAY_ON  1
-#define LCD_DISPLAY_START_ADDR 1
-#define LCD_SET_X_ADDRESS 1
-#define LCD_SET_Y_ADDRESS 1
-#define LCD_CHIP_WIDTH 1
-#define LCD_ROWS 1
-#define LCD_COLS 1
+#define LCD_DISPLAY_ON  0x3f
+#define LCD_DISPLAY_START_ADDR 0xc0
+#define LCD_SET_X_ADDRESS 0xb8
+#define LCD_SET_Y_ADDRESS 0x40
+#define LCD_CHIP_WIDTH 64
+#define LCD_ROWS 64
+#define LCD_COLS 256
 /*marco operation instruction*/
 #define LCD_RST_LOW()     LCD_RST = 0 /*RST:Reset signal high*/
 #define LCD_RST_HIGH()    LCD_RST = 1 /*reset signal low*/
@@ -46,10 +46,10 @@
 #define LCD_OUT_DATA(c)   LCD_DATA_BUS = (c) /*output data on the data bus*/
 #define DELAY_US()    {}                   /*delay 1 us*/
 #define LCD_CHIP_SEL_0()   {LCD_CSA = 0;LCD_CSB = 0;LCD_CSC=0;} /*select the left-most section*/
-#define LCD_CHIP_SEL_1()   {LCD_CSA = 0;LCD_CSB = 0;LCD_CSC=1;} /*select the left-most section*/
+#define LCD_CHIP_SEL_1()   {LCD_CSA = 1;LCD_CSB = 0;LCD_CSC=0;} /*select the left-most section*/
 #define LCD_CHIP_SEL_2()   {LCD_CSA = 0;LCD_CSB = 1;LCD_CSC=0;} /*select the left-most section*/
-#define LCD_CHIP_SEL_3()   {LCD_CSA = 0;LCD_CSB = 1;LCD_CSC=1;} /*select the left-most section*/
-#define LCD_CHIP_DISABLE_ALL() {LCD_CSA = 1}           /*Disable all the access to the LCD module*/
+#define LCD_CHIP_SEL_3()   {LCD_CSA = 1;LCD_CSB = 1;LCD_CSC=0;} /*select the left-most section*/
+#define LCD_CHIP_DISABLE_ALL() {LCD_CSC = 0}           /*Disable all the access to the LCD module*/
 
 /*function declaration*/
 ERCD LCD_Init(void);
