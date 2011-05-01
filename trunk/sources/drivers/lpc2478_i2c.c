@@ -58,7 +58,7 @@ ERCD I2C_Init(uint8_t I2cChannel, uint16_t I2cMode, uint16_t I2cClk, uint8_t I2c
     /*--- Clear flags ---*/
 	setreg(i2c_baseAddr + I2CONCLR_OFFSET,I2CONCLR_AAC | I2CONCLR_SIC | I2CONCLR_STAC | I2CONCLR_I2ENC);
 
-    /*--- Reset registers ---*/
+    /*--- clock registers ---*/
 	i2c_clk_temp = I2C_PCLK / I2cClk;
 	setreg(i2c_baseAddr + I2SCLH_OFFSET, (i2c_clk_temp + 1)>>1);
 	setreg(i2c_baseAddr + I2SCLL_OFFSET, (i2c_clk_temp)>>1);
