@@ -74,11 +74,11 @@ depend: $(CSRCS)
 clean:
 	@ echo
 	@ echo Cleaning project:
-	$(RM) -f *.hex *.elf *.o *.lst *.dmp *.map .depend
-	cd sources;$(RM) -f *.hex *.elf *.o *.lst *.dmp *.map .depend
-	cd sources/drivers;$(RM) -f *.hex *.elf *.o *.lst *.dmp *.map .depend
-	cd sources/common;$(RM) -f *.hex *.elf *.o *.lst *.dmp *.map .depend
-	cd sources/includes;$(RM) -f *.hex *.elf *.o *.lst *.dmp *.map .depend
+	$(RM) -f *.hex *.elf *.o *.lst *.dmp *.map .depend *_flymake.c *_flymake.h *.c~ *.h~
+	cd sources;$(RM) -f *.hex *.elf *.o *.lst *.dmp *.map .depend *_flymake.c *_flymake.h  *.c~ *.h~
+	cd sources/drivers;$(RM) -f *.hex *.elf *.o *.lst *.dmp *.map .depend *_flymake.c *_flymake.h *.c~ *.h~
+	cd sources/common;$(RM) -f *.hex *.elf *.o *.lst *.dmp *.map .depend *_flymake.c *_flymake.h *.c~ *.h~
+	cd sources/includes;$(RM) -f *.hex *.elf *.o *.lst *.dmp *.map .depend *_flymake.c *_flymake.h *.c~ *.h~
 
 # Listing of phony targets.
 .PHONY : all clean

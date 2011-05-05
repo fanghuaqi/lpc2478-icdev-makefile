@@ -81,12 +81,16 @@ uint8_t LCD_Read_Char(void)
     LCD_E_LOW();                    /*after data read  pull low E*/
     return data_read;
 }
-/** 
+/**
+ * @file   lpc2478_lcd.c
+ * @author fanghuaqi <578567190@qq.com>
+ * @date   Tue May  3 10:34:54 2011
+ * 
+ * @brief  
  * 
  * 
- * 
- * @return 
  */
+
 uint8_t LCD_Read_Status(void)
 {
     uint8_t status;
