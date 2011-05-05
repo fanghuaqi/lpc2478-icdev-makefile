@@ -26,6 +26,13 @@
 #define	I2C0_ADDR	0x40   							/*由于CH452的ADDR引脚被强制拉低，所以addr配置为40h*/
 #define I2C1_ADDR 	0x31
 #define I2C2_ADDR 	0x82
+#define EEPROM_ADDR 0xA0
+/* EEPROM W/R Operation  */
+#define EEPROM_WRITE 0
+#define EEPROM_READ  1
+/* EEPROM High addr*/
+#define EEPROM_P0    0x02
+#define	EEPROM_CLK	 1000000
 /*i2c PCONP bit location*/
 #define PCI2C0		7
 #define PCI2C1		19
@@ -91,13 +98,16 @@ extern volatile uint8_t gl_CH452_key ;
 
 ERCD 	  	I2C_Init(uint8_t I2cChannel, uint16_t I2cMode, uint16_t I2cClk, uint8_t I2cAddress);
 uint8_t 	I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr);
-ERCD 		I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cData);
+ERCD 		I2C_Master_WritByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cData);
 ERCD        CH452_LED_OPEN(uint16_t led_mask, uint8_t colorType);
 ERCD        CH452_LED_OPEN_SEL(uint8_t led_num, uint8_t colorType);
 ERCD 		CH452_Init(void);
 ERCD 		CH452_KeyPress_Signal(void);
 ERCD 		CH452_Set_SegValue(uint8_t *seg_value);
 ERCD 		CH452_Get_SegValue(uint8_t *seg_value);
+ERCD        EEPROM_Init(uint8_t i2c_channel,uint16_t clock);
+uint8_t     EEPROM_ReadByte(uint8_t i2c_channel, uint32_t addr);
+ERCD        EEPROM_WriteByte(uint8_t i2c_channel, uint32_t addr, uint8_t data);
 #define	CH452_CLOSE_ALLLEDS()	I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_LEVEL>>7), 0)
 
 #endif

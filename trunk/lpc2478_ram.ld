@@ -34,7 +34,7 @@ SECTIONS
     {
         __text = . ;                                  /*create a global symbol marking the start of the .text section*/
         *(.text)                                      /*all .text sections*/
-    } > SDRAM                                         /*put all the above into SDRAM*/
+    } > SRAM                                         /*put all the above into SDRAM*/
     _etext = .	;                                     /*define a global symbol marking the end of the .text section */
     PROVIDE (etext = .)	;                             /*define a symbol etext  only if it is referenced but not defined*/
     
@@ -42,7 +42,7 @@ SECTIONS
 	{                                                           
 		*(.rodata)                                    /*all .rodata sections*/              
 		*(.rodata.*)                                  /*all .rodata.* sections*/ 
-	} > SDRAM                                         /*put all the above into SDRAM*/
+	} > SRAM                                         /*put all the above into SDRAM*/
     . = ALIGN(4);                                     /*advance location counter to the next 32-bit boundary */
 
     __idata_start = . ;                               /*define a global symbol marking the start of the .data section */
@@ -50,7 +50,7 @@ SECTIONS
     {
         __data_start = . ;                            /*create a global symbol marking the start of the .data section*/  
         *(.data)                                      /*all .text sections*/           
-    } > SDRAM                                         /*put all the above into SDRAM*/
+    } > SRAM                                         /*put all the above into SDRAM*/
 	. = ALIGN (4);                                    /*advance location counter to the next 32-bit boundary */
     __idata_end = __idata_start + SIZEOF(.data);      /*define a global symbol marking the end of the .data section */
     
@@ -64,7 +64,7 @@ SECTIONS
       *(.bss)                                         /*all .bss sections*/ 
       *(COMMON)                                       /*all COMMON sections*/ 
 	  __bss_end = .;                                  /*define a global symbol marking the end of the .bss section */
-    } > SDRAM                                         /*put all the above into SDRAM,it will be cleared in the startup code*/
+    } > SRAM                                         /*put all the above into SDRAM,it will be cleared in the startup code*/
     . = ALIGN(32 / 8);
      _end = .		;                                 /*define a global symbol marking the end of application RAM */
     PROVIDE (end = .)	;
