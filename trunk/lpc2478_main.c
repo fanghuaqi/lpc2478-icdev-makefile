@@ -23,12 +23,13 @@ void main(){
     //EINT0_Init(FALLING_EDGE,HIGHEST_PRIORITY);
     UART_Printf("Hello World!\n");
     EEPROM_Init(I2C_CHL1,EEPROM_CLK);
-
+    Delay_ms(10);
 
 
     while(1){
     	for (i=0;i<0x20000;i++){
-    	    	EEPROM_WriteByte(I2C_CHL1,i,i);
+    	    	EEPROM_WriteByte(I2C_CHL1,i,254);
+    	    	//Delay_ms(100);
     	}
     	for (i=0;i<0x20000;i++){
     		UART_Printf("%d:%d\n",i,EEPROM_ReadByte(I2C_CHL1,i));

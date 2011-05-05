@@ -32,7 +32,7 @@
 #define EEPROM_READ  1
 /* EEPROM High addr*/
 #define EEPROM_P0    0x02
-#define	EEPROM_CLK	 1000000
+#define	EEPROM_CLK	 100000
 /*i2c PCONP bit location*/
 #define PCI2C0		7
 #define PCI2C1		19
@@ -53,8 +53,8 @@
 #define I2C_CLK_DIV	         CLK_DIV_1
 #define I2C_PCLK			 (Fcclk/I2C_CLK_DIV)
 /*I2C Read Or Write Define*/
-#define I2C_READ			 1
-#define I2C_WRITE			 0
+#define I2C_READ_OP			 1
+#define I2C_WRITE_OP		 0
 /*CH452 LED color definitions*/
 #define LED_OFF              0
 #define LED_RED              1
@@ -96,9 +96,12 @@
 
 extern volatile uint8_t gl_CH452_key ;
 
+#define I2C_CLEAR_STAT(i2c_baseAddr,I2C_STAT)     setreg((i2c_baseAddr) + I2CONCLR_OFFSET,(I2C_STAT))
+#define I2C_SEND(i2c_baseAddr,I2C_DAT)            setreg((i2c_baseAddr) + I2DAT_OFFSET,(I2C_DAT))
+#define I2C_READ(i2c_baseAddr)                    getreg((i2c_baseAddr) + I2DAT_OFFSET)
 ERCD 	  	I2C_Init(uint8_t I2cChannel, uint16_t I2cMode, uint16_t I2cClk, uint8_t I2cAddress);
 uint8_t 	I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr);
-ERCD 		I2C_Master_WritByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cData);
+ERCD 		I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cData);
 ERCD        CH452_LED_OPEN(uint16_t led_mask, uint8_t colorType);
 ERCD        CH452_LED_OPEN_SEL(uint8_t led_num, uint8_t colorType);
 ERCD 		CH452_Init(void);
@@ -108,6 +111,10 @@ ERCD 		CH452_Get_SegValue(uint8_t *seg_value);
 ERCD        EEPROM_Init(uint8_t i2c_channel,uint16_t clock);
 uint8_t     EEPROM_ReadByte(uint8_t i2c_channel, uint32_t addr);
 ERCD        EEPROM_WriteByte(uint8_t i2c_channel, uint32_t addr, uint8_t data);
+uint32_t I2C_BASE_SEL(uint8_t i2c_channel);
+ERCD I2C_START(uint32_t i2c_baseAddr);
+ERCD I2C_ACK(uint32_t i2c_baseAddr,uint8_t status);
+ERCD I2C_STOP(uint32_t i2c_baseAddr);
 #define	CH452_CLOSE_ALLLEDS()	I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_LEVEL>>7), 0)
 
 #endif
