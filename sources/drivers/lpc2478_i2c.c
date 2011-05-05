@@ -119,7 +119,7 @@ uint8_t I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr)
 //    		goto TIMEOUT_ROUTINE;
 //    	}
     }
-    setreg(i2c_baseAddr + I2DAT_OFFSET, SlaveAddr + I2C_READ);    				/*设置读取的从设备的地址*/
+    setreg(i2c_baseAddr + I2DAT_OFFSET, SlaveAddr + I2C_READ_OP);    				/*设置读取的从设备的地址*/
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_STAC|I2CONCLR_SIC);			/*清除SI,STR,启动串行传输*/
           
     while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x40)				    		/*起始字必须为0x8*/
@@ -199,7 +199,7 @@ ERCD I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cDat
 //			goto TIMEOUT_ROUTINE;
 //		}
 	}
-	setreg(i2c_baseAddr + I2DAT_OFFSET, SlaveAddr + I2C_WRITE);    				/*设置读取的从设备的地址*/
+	setreg(i2c_baseAddr + I2DAT_OFFSET, SlaveAddr + I2C_WRITE_OP);    				/*设置读取的从设备的地址*/
 	setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_STAC|I2CONCLR_SIC);			/*清除SI,STR,启动串行传输*/
      
 	while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x18)//;							/*等待SLA+W传输完毕*/
@@ -373,8 +373,20 @@ ERCD CH452_KeyPress_Signal(void)
  */
 ERCD EEPROM_Init(uint8_t i2c_channel,uint16_t clock)
 {
-    return I2C_Init(i2c_channel,I2CMASTER,clock,EEPROM_ADDR|EEPROM_WRITE);
+	uint32_t i2c_baseAddr = 0;
 
+	I2C_Init(i2c_channel,I2CMASTER,clock,EEPROM_ADDR|EEPROM_WRITE);
+
+	i2c_baseAddr=I2C_BASE_SEL(i2c_channel);
+	I2C_START(i2c_baseAddr);
+	I2C_ACK(i2c_baseAddr,0x08);
+	I2C_SEND(i2c_baseAddr,EEPROM_ADDR|EEPROM_WRITE);
+	I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_STAC|I2CONCLR_SIC);
+	I2C_ACK(i2c_baseAddr,0x18);
+	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STA);
+	setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_STAC|I2CONCLR_SIC);
+	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);          	/*发送一个起始状态位STA*/
+	return ERCD_OK;
 }
 /** 
  * EEPROM_READ_BYTE
@@ -389,6 +401,8 @@ uint8_t EEPROM_ReadByte(uint8_t i2c_channel, uint32_t addr)
     //uint8_t eeprom_data_addr[2];
     uint8_t eeprom_addr;
     uint8_t eeprom_data;
+    uint32_t i2c_baseAddr = 0;
+    
     if (addr & 0xfffe0000){
         return ERCD_ARG_ERR;
     }
@@ -398,9 +412,34 @@ uint8_t EEPROM_ReadByte(uint8_t i2c_channel, uint32_t addr)
         eeprom_addr = EEPROM_ADDR;
     }
     
-    I2C_Master_WriteByte(i2c_channel, eeprom_addr,(uint8_t)(addr>>8)); /*High addr Half first*/
-    I2C_Master_WriteByte(i2c_channel, eeprom_addr,(uint8_t)addr); /*low addr Half follow*/
-    eeprom_data = I2C_Master_ReadByte(i2c_channel, eeprom_addr);/*read data*/
+    i2c_baseAddr=I2C_BASE_SEL(i2c_channel);
+    I2C_START(i2c_baseAddr);
+    I2C_ACK(i2c_baseAddr,0x08);
+    I2C_SEND(i2c_baseAddr,eeprom_addr|EEPROM_WRITE);
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_STAC|I2CONCLR_SIC);
+    I2C_ACK(i2c_baseAddr,0x18);
+    I2C_SEND(i2c_baseAddr,(uint8_t)(addr>>8));
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
+    I2C_ACK(i2c_baseAddr,0x28);
+    I2C_SEND(i2c_baseAddr,(uint8_t)(addr));
+    //I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
+    //I2C_ACK(i2c_baseAddr,0x28);
+    //I2C_STOP(i2c_baseAddr);
+    setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);
+    setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);
+    setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STA);          	/*发送一个起始状态位STA*/
+    //I2C_START(i2c_baseAddr);
+    I2C_ACK(i2c_baseAddr,0x08);
+    I2C_SEND(i2c_baseAddr,eeprom_addr|EEPROM_READ);
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_STAC|I2CONCLR_SIC);
+    I2C_ACK(i2c_baseAddr,0x40);
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
+    I2C_ACK(i2c_baseAddr,0x58);
+    eeprom_data=I2C_READ(i2c_baseAddr);
+    I2C_STOP(i2c_baseAddr);
+    //I2C_Master_WriteByte(i2c_channel, eeprom_addr,(uint8_t)(addr>>8)); /*High addr Half first*/
+    // I2C_Master_WriteByte(i2c_channel, eeprom_addr,(uint8_t)addr); /*low addr Half follow*/
+    //eeprom_data = I2C_Master_ReadByte(i2c_channel, eeprom_addr);/*read data*/
     return eeprom_data;
 }
 /** 
@@ -414,6 +453,7 @@ uint8_t EEPROM_ReadByte(uint8_t i2c_channel, uint32_t addr)
 ERCD EEPROM_WriteByte(uint8_t i2c_channel, uint32_t addr, uint8_t data)
 {
     uint8_t eeprom_addr;
+    uint32_t i2c_baseAddr = 0;
 //    uint8_t eeprom_data;
     if (addr & 0xfffe0000){
         return ERCD_ARG_ERR;
@@ -423,16 +463,98 @@ ERCD EEPROM_WriteByte(uint8_t i2c_channel, uint32_t addr, uint8_t data)
     }else{
         eeprom_addr = EEPROM_ADDR;
     }
-    I2C_Master_WriteByte(i2c_channel, eeprom_addr,(uint8_t)(addr>>8)); /*High addr Half first*/
-    I2C_Master_WriteByte(i2c_channel, eeprom_addr,(uint8_t)addr); /*low addr Half follow*/
-    return I2C_Master_WriteByte(i2c_channel, eeprom_addr,data);
+    i2c_baseAddr=I2C_BASE_SEL(i2c_channel);
+    I2C_START(i2c_baseAddr);
+    I2C_ACK(i2c_baseAddr,0x08);
+    I2C_SEND(i2c_baseAddr,eeprom_addr|EEPROM_WRITE);
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_STAC|I2CONCLR_SIC);
+    I2C_ACK(i2c_baseAddr,0x18);
+    I2C_SEND(i2c_baseAddr,(uint8_t)(addr>>8));
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
+    I2C_ACK(i2c_baseAddr,0x28);
+    I2C_SEND(i2c_baseAddr,(uint8_t)(addr));
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
+    I2C_ACK(i2c_baseAddr,0x28);
+    I2C_SEND(i2c_baseAddr,data);
+    //I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
+    //I2C_ACK(i2c_baseAddr,0x28);
+    I2C_STOP(i2c_baseAddr);
+    return ERCD_OK;
+    //I2C_Master_WriteByte(i2c_channel, eeprom_addr,(uint8_t)(addr>>8)); /*High addr Half first*/
+    //I2C_Master_WriteByte(i2c_channel, eeprom_addr,(uint8_t)addr); /*low addr Half follow*/
+    //return I2C_Master_WriteByte(i2c_channel, eeprom_addr,data);
 }
 
+/** 
+ * I2C_BASE_SEL
+ * 
+ * @param i2c_channel 
+ * 
+ * @return 
+ */
+uint32_t I2C_BASE_SEL(uint8_t i2c_channel)
+{
+    uint32_t i2c_baseAddr = 0;
 
+	switch (i2c_channel){
+	case I2C_CHL0:
+		i2c_baseAddr = I2C0_BASE_ADDR;
+		break;
 
+	case I2C_CHL1:
+		i2c_baseAddr = I2C1_BASE_ADDR;
+		break;
 
+	case I2C_CHL2:
+		i2c_baseAddr = I2C2_BASE_ADDR;
+		break;
 
+	default:
+		return ERCD_ARG_ERR;
+		break;
+	}
+    return i2c_baseAddr;
+}
 
-
-
-
+/** 
+ * 
+ * 
+ * @param i2c_baseAddr 
+ * 
+ * @return 
+ */
+ERCD I2C_START(uint32_t i2c_baseAddr)
+{
+    setreg(i2c_baseAddr + I2CONCLR_OFFSET, (I2CONCLR_STAC|I2CONCLR_SIC|I2CONCLR_AAC));/*clear status*/
+	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_I2EN);          /*使能I2C作为主机*/
+	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STA);          	/*发送一个起始状态位STA*/
+	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STA);          	/*发送一个起始状态位STA*/
+	return ERCD_OK;
+}
+/** 
+ * 
+ * I2C_ACK
+ * @param i2c_baseAddr 
+ * @param status 
+ * 
+ * @return 
+ */
+ERCD I2C_ACK(uint32_t i2c_baseAddr,uint8_t status)
+{
+    while(getreg(i2c_baseAddr + I2STAT_OFFSET) != status);
+    return ERCD_OK;
+}
+/** 
+ * I2C_STOP
+ * 
+ * @param i2c_baseAddr 
+ * 
+ * @return 
+ */
+ERCD I2C_STOP(uint32_t i2c_baseAddr)
+{
+    setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);						/*发送停止位STO*/  /*注意：必须先发数据再清除SI等位*/
+    setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC|I2CONCLR_AAC);         
+    while(getreg(i2c_baseAddr + I2CONSET_OFFSET) & I2CONSET_STO );
+    return ERCD_OK;
+}
