@@ -19,8 +19,8 @@
 .set  UND_STACK_SIZE, 0x00000040		/* stack for "undefined instruction" interrupts	*/
 .set  ABT_STACK_SIZE, 0x00000040		/* stack for "abort" interrupts	*/
 .set  FIQ_STACK_SIZE, 0x00000040		/* stack for "FIQ" interrupts	*/
-.set  IRQ_STACK_SIZE, 0x00000100		/* stack for "IRQ" normal interrupts	*/
-.set  SYS_STACK_SIZE, 0x00000400		/* stack for "SYS" system mode	*/
+.set  IRQ_STACK_SIZE, 0x00000040		/* stack for "IRQ" normal interrupts	*/
+.set  SYS_STACK_SIZE, 0x00000100		/* stack for "SYS" system mode	*/
 
 /* Standard definitions of Mode bits and Interrupt (I & F) flags in PSRs (program status registers) */
 .set  MODE_USR, 0x10            		/* Normal User Mode	*/
