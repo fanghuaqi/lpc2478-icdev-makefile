@@ -32,7 +32,7 @@
 #define EEPROM_READ  1
 /* EEPROM High addr*/
 #define EEPROM_P0    0x02
-#define	EEPROM_CLK	 100000
+#define	EEPROM_CLK	 10000
 /*i2c PCONP bit location*/
 #define PCI2C0		7
 #define PCI2C1		19

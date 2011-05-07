@@ -40,6 +40,7 @@ ERCD I2C_Init(uint8_t I2cChannel, uint16_t I2cMode, uint16_t I2cClk, uint8_t I2c
 		setregbits(PCLKSEL1,~(3<<6),(I2C_CLK_DIV<<6));
 		/* set PIO0.0 and PIO0.1 to I2C1 SDA and SCL  function to 11 on both SDA and SCL.*/
 		setregbits(PINSEL0,~(0xf<<0),(0xf<<0));
+		setregbits(PINMODE0,~(0xf<<0),(0x0<<0));
 		break;
 
 	case I2C_CHL2:
@@ -419,21 +420,21 @@ uint8_t EEPROM_ReadByte(uint8_t i2c_channel, uint32_t addr)
     I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_STAC|I2CONCLR_SIC);
     I2C_ACK(i2c_baseAddr,0x18);
     I2C_SEND(i2c_baseAddr,(uint8_t)(addr>>8));
-    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC|I2CONCLR_AAC);
     I2C_ACK(i2c_baseAddr,0x28);
     I2C_SEND(i2c_baseAddr,(uint8_t)(addr));
-    //I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
-    //I2C_ACK(i2c_baseAddr,0x28);
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
+    I2C_ACK(i2c_baseAddr,0x28);
     //I2C_STOP(i2c_baseAddr);
     setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);
-    setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);
+    setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC|I2CONCLR_AAC);
     setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STA);          	/*发送一个起始状态位STA*/
     //I2C_START(i2c_baseAddr);
     I2C_ACK(i2c_baseAddr,0x08);
     I2C_SEND(i2c_baseAddr,eeprom_addr|EEPROM_READ);
     I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_STAC|I2CONCLR_SIC);
     I2C_ACK(i2c_baseAddr,0x40);
-    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC|I2CONCLR_AAC);
     I2C_ACK(i2c_baseAddr,0x58);
     eeprom_data=I2C_READ(i2c_baseAddr);
     I2C_STOP(i2c_baseAddr);
@@ -470,14 +471,14 @@ ERCD EEPROM_WriteByte(uint8_t i2c_channel, uint32_t addr, uint8_t data)
     I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_STAC|I2CONCLR_SIC);
     I2C_ACK(i2c_baseAddr,0x18);
     I2C_SEND(i2c_baseAddr,(uint8_t)(addr>>8));
-    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC|I2CONCLR_AAC);
     I2C_ACK(i2c_baseAddr,0x28);
     I2C_SEND(i2c_baseAddr,(uint8_t)(addr));
-    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC|I2CONCLR_AAC);
     I2C_ACK(i2c_baseAddr,0x28);
     I2C_SEND(i2c_baseAddr,data);
-    //I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
-    //I2C_ACK(i2c_baseAddr,0x28);
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
+    I2C_ACK(i2c_baseAddr,0x28);
     I2C_STOP(i2c_baseAddr);
     return ERCD_OK;
     //I2C_Master_WriteByte(i2c_channel, eeprom_addr,(uint8_t)(addr>>8)); /*High addr Half first*/

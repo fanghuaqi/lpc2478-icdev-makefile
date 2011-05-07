@@ -35,7 +35,7 @@ void Delay_ms(uint32_t ms)
 	volatile uint32_t i,j,k;
 	for(i=0;i<50;i++)
 	{
-		for(j=0;j<100;j++)
+		for(j=0;j<33;j++)
 		{
 			for(k=0;k<ms;k++);
 		}
