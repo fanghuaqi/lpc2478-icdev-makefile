@@ -27,14 +27,19 @@ void main(){
 
 
     while(1){
-    	for (i=0;i<0x20000;i++){
-    	    	EEPROM_WriteByte(I2C_CHL1,i,254);
-    	    	//Delay_ms(100);
+    	for (i=0x0;i<0x10;i++){
+    	    	EEPROM_WriteByte(I2C_CHL1,0xaa,i);
+    	    	//Delay_ms(2);
+    	    	//EEPROM_ReadByte(I2C_CHL1,i);
     	}
-    	for (i=0;i<0x20000;i++){
+    	//Delay_ms(1);
+    	for (i=0x0;i<0x10;i++){
     		UART_Printf("%d:%d\n",i,EEPROM_ReadByte(I2C_CHL1,i));
+    		//EEPROM_ReadByte(I2C_CHL1,i);
+    		Delay_ms(1);
     	}
-    	Delay_ms(1);
+    	Delay_ms(1000);
+    	UART_Printf("Hello World!\n");
 //    	temp = gl_CH452_key;									/*read the ch452 key */
 //    	if (temp & 0x80){   									/*the first time pressed?*/
 //    		pressed = 0;
