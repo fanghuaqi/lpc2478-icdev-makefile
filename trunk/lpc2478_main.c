@@ -22,19 +22,21 @@ void main(){
     //CH452_Init();												/*init ch452 keyboard and led*/
     //EINT0_Init(FALLING_EDGE,HIGHEST_PRIORITY);
     UART_Printf("Hello World!\n");
-    EEPROM_Init(I2C_CHL1,EEPROM_CLK);
+    EEPROM_Init(I2C_CHL0,EEPROM_CLK);
+    //I2CInit(40000);
     Delay_ms(10);
 
 
     while(1){
     	for (i=0x0;i<0x10;i++){
-    	    	EEPROM_WriteByte(I2C_CHL1,0xaa,i);
-    	    	//Delay_ms(2);
+    	    	//EEPROM_WriteByte(I2C_CHL0,i,i);
+    		I2CWriteByte(0xa0, i, i);
+    	    Delay_ms(2);
     	    	//EEPROM_ReadByte(I2C_CHL1,i);
     	}
     	//Delay_ms(1);
     	for (i=0x0;i<0x10;i++){
-    		UART_Printf("%d:%d\n",i,EEPROM_ReadByte(I2C_CHL1,i));
+    		UART_Printf("%d:%d\n",i,I2CReadByte(0xa0, i));
     		//EEPROM_ReadByte(I2C_CHL1,i);
     		Delay_ms(1);
     	}

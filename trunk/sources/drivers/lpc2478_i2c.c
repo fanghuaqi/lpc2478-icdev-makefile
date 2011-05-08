@@ -32,6 +32,7 @@ ERCD I2C_Init(uint8_t I2cChannel, uint16_t I2cMode, uint16_t I2cClk, uint8_t I2c
 		setregbits(PCLKSEL0,~(3<<14),(I2C_CLK_DIV<<14));
 		/* set PIO0.27 and PIO0.28 to I2C0 SDA and SCL  function to 01 on both SDA and SCL.*/
 		setregbits(PINSEL1,~(0xf<<22),(0x5<<22));
+		setregbits(PINMODE1,~(0xf<<0),(0x0<<0));
 		break;
 
 	case I2C_CHL1:
@@ -419,11 +420,11 @@ uint8_t EEPROM_ReadByte(uint8_t i2c_channel, uint32_t addr)
     I2C_SEND(i2c_baseAddr,eeprom_addr|EEPROM_WRITE);
     I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_STAC|I2CONCLR_SIC);
     I2C_ACK(i2c_baseAddr,0x18);
-    I2C_SEND(i2c_baseAddr,(uint8_t)(addr>>8));
-    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC|I2CONCLR_AAC);
-    I2C_ACK(i2c_baseAddr,0x28);
+    //I2C_SEND(i2c_baseAddr,(uint8_t)(addr>>8));
+    //I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC|I2CONCLR_AAC);
+    //I2C_ACK(i2c_baseAddr,0x28);
     I2C_SEND(i2c_baseAddr,(uint8_t)(addr));
-    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC|I2CONCLR_AAC);
     I2C_ACK(i2c_baseAddr,0x28);
     //I2C_STOP(i2c_baseAddr);
     setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);
@@ -470,13 +471,14 @@ ERCD EEPROM_WriteByte(uint8_t i2c_channel, uint32_t addr, uint8_t data)
     I2C_SEND(i2c_baseAddr,eeprom_addr|EEPROM_WRITE);
     I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_STAC|I2CONCLR_SIC);
     I2C_ACK(i2c_baseAddr,0x18);
-    I2C_SEND(i2c_baseAddr,(uint8_t)(addr>>8));
-    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC|I2CONCLR_AAC);
-    I2C_ACK(i2c_baseAddr,0x28);
+    //I2C_SEND(i2c_baseAddr,(uint8_t)(addr>>8));
+    //I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC|I2CONCLR_AAC);
+    //I2C_ACK(i2c_baseAddr,0x28);
     I2C_SEND(i2c_baseAddr,(uint8_t)(addr));
     I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC|I2CONCLR_AAC);
     I2C_ACK(i2c_baseAddr,0x28);
     I2C_SEND(i2c_baseAddr,data);
+    Delay_ms(1);
     I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
     I2C_ACK(i2c_baseAddr,0x28);
     I2C_STOP(i2c_baseAddr);
@@ -559,3 +561,115 @@ ERCD I2C_STOP(uint32_t i2c_baseAddr)
     while(getreg(i2c_baseAddr + I2CONSET_OFFSET) & I2CONSET_STO );
     return ERCD_OK;
 }
+
+
+
+/*
+I2C总线测试EEPROM器件函数:I2CInit,I2CWriteByte,I2CReadByte
+
+*/
+/*****************************************************************************
+** Function name:		I2CInit
+**
+** Descriptions:		初始化I2C接口
+**
+** parameters:
+**
+** Returned value:		无
+**
+*****************************************************************************/
+void I2CInit(unsigned int fi2c)
+{
+  PINSEL1 |= 0x1400000;			//选择SDA0,SCL0管脚功能
+  I20SCLH = (57600000/fi2c + 1) / 2;	//设置时钟频率
+  I20SCLL = (57600000/fi2c) / 2;
+  I20CONCLR = (I2CONCLR_STAC|I2CONCLR_SIC|I2CONCLR_AAC);
+  I20CONSET = I2CONSET_I2EN;		//使能I2C主机模式
+  //setup interrupt...
+}
+/*****************************************************************************
+** Function name:		I2CWriteByte
+**
+** Descriptions:		向I2C总线写1个字节到AT24C02
+**
+** parameters:			data:数据
+** 				address:写入地址
+** Returned value:		无
+**
+*****************************************************************************/
+unsigned char I2CWriteByte(unsigned char sla, unsigned char data,unsigned char address)
+{
+   int i;
+   I20CONCLR = (I2CONCLR_STAC|I2CONCLR_SIC|I2CONCLR_AAC);
+   I20CONSET = I2CONSET_I2EN;		//使能I2C主机模式e
+   I20CONSET = I2CONSET_STA;		//发送起始状态
+
+   while(I20STAT != 0x8);
+   I20DAT = sla;			//设置 SLA+W:1010000+0
+   I20CONCLR = (I2CONCLR_SIC|I2CONCLR_STAC);//对SI清零以发送SLA+W
+
+   while(I20STAT != 0x18);
+   I20DAT = address;//对EEPROM写入地址
+   I20CONCLR = I2CONCLR_SIC;//清零SI位，发送地址值
+
+   while(I20STAT != 0x28);//起始值必为0x28
+   I20DAT = data;//写数据到EEPROM
+   I20CONCLR = I2CONCLR_SIC;//清零SI位，发送数据
+   for(i = 0;i<4000;i++);//等待将数据发送给EEPROM
+
+   I20CONCLR = I2CONCLR_SIC;
+   I20CONSET = I2CONSET_STO;//置ST0位为1，以停止传输
+
+   for(i = 0;i<8000;i++);
+   return 1;
+}
+/*****************************************************************************
+** Function name:		I2CReadByte
+**
+** Descriptions:		从AT24C02中读取一个字节数据
+**
+** parameters:			address:读取地址
+**
+** Returned value:		无
+**
+*****************************************************************************/
+unsigned char I2CReadByte(unsigned char sla, unsigned char address)
+{
+  char data;
+
+  I20CONCLR = (I2CONCLR_STAC|I2CONCLR_SIC|I2CONCLR_AAC);
+  I20CONSET = I2CONSET_I2EN;//使能I2C作为主机
+
+  I20CONSET = I2CONSET_STA;//发送一个起始状态位
+  I20CONSET = I2CONSET_STA;//test restart!!
+
+  while(I20STAT != 0x8);//起始字必须为0x8
+  I20DAT = sla;//设置 SLA+W
+  I20CONCLR = 0x8|0x20;//清零SI位，以传输SLA+W
+
+  while(I20STAT != 0x18);//起始字必须为0x18
+  I20DAT = address;//EEPROM将要读取的地址
+  I20CONCLR = I2CONCLR_SIC;//清零SI位，以传输地址
+
+  while(I20STAT != 0x28);//起始字必须为0x28
+  I20CONSET = I2CONSET_STO;//停止测试写操作
+  I20CONCLR = I2CONCLR_SIC;//清零SI位
+  I20CONSET = I2CONSET_STA;//发送另一个起始状态
+
+  while(I20STAT != 0x8);
+  I20DAT = sla+1;//发送读命令:1010000+1
+  I20CONCLR = (I2CONCLR_SIC|I2CONCLR_STAC);//清零SI位，以传输EPROM读命令
+
+  while(I20STAT != 0x40);//起始字0x40
+  I20CONCLR = I2CONCLR_SIC;//清零SI位，以读取EEPROM
+  while(I20STAT != 0x58);//接受数据，无ACK
+  data = I20DAT;//读数据
+
+
+  I20CONCLR = (I2CONCLR_SIC|I2CONCLR_AAC);
+  I20CONSET = I2CONSET_STO;//设置ST0位为1，以停止传输
+  return data;
+}
+/*********************************************************************************
+**                            End Of File
+*********************************************************************************/
