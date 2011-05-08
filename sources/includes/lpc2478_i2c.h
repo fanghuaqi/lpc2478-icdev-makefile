@@ -115,6 +115,9 @@ uint32_t I2C_BASE_SEL(uint8_t i2c_channel);
 ERCD I2C_START(uint32_t i2c_baseAddr);
 ERCD I2C_ACK(uint32_t i2c_baseAddr,uint8_t status);
 ERCD I2C_STOP(uint32_t i2c_baseAddr);
+void I2CInit(unsigned int fi2c);
+unsigned char I2CWriteByte(unsigned char sla, unsigned char data,unsigned char address);
+unsigned char I2CReadByte(unsigned char sla, unsigned char address);
 #define	CH452_CLOSE_ALLLEDS()	I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_LEVEL>>7), 0)
 
 #endif
