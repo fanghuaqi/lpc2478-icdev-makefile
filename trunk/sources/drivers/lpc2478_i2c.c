@@ -483,14 +483,14 @@ ERCD EEPROM_WriteByte(uint8_t i2c_channel, uint32_t addr, uint8_t data)
     I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC|I2CONCLR_AAC);
     I2C_ACK(i2c_baseAddr,0x28);
     I2C_SEND(i2c_baseAddr,data);
-    //Delay_ms(10);
-    //I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC);
-    //I2C_ACK(i2c_baseAddr,0x28);
+    //Delay_ms(5);
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC|I2CONCLR_AAC);
+    I2C_ACK(i2c_baseAddr,0x28);
     I2C_STOP(i2c_baseAddr);
     return ERCD_OK;
     //I2C_Master_WriteByte(i2c_channel, eeprom_addr,(uint8_t)(addr>>8)); /*High addr Half first*/
     //I2C_Master_WriteByte(i2c_channel, eeprom_addr,(uint8_t)addr); /*low addr Half follow*/
-    //return I2C_Master_WriteByte(i2c_channel, eeprom_addr,data);
+    return I2C_Master_WriteByte(i2c_channel, eeprom_addr,data);
 }
 
 /** 
