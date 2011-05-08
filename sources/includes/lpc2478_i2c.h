@@ -96,9 +96,10 @@
 
 extern volatile uint8_t gl_CH452_key ;
 
-#define I2C_CLEAR_STAT(i2c_baseAddr,I2C_STAT)     setreg((i2c_baseAddr) + I2CONCLR_OFFSET,(I2C_STAT))
-#define I2C_SEND(i2c_baseAddr,I2C_DAT)            setreg((i2c_baseAddr) + I2DAT_OFFSET,(I2C_DAT))
-#define I2C_READ(i2c_baseAddr)                    getreg((i2c_baseAddr) + I2DAT_OFFSET)
+#define I2C_CLEAR_STAT(i2c_baseAddr,I2C_STAT)     setreg(((i2c_baseAddr) + I2CONCLR_OFFSET),(I2C_STAT))
+#define I2C_SEND(i2c_baseAddr,I2C_DAT)            setreg(((i2c_baseAddr) + I2DAT_OFFSET),(I2C_DAT))
+#define I2C_READ(i2c_baseAddr)                    getreg(((i2c_baseAddr) + I2DAT_OFFSET))
+#define I2C_ACK(i2c_baseAddr, status)             while(getreg((i2c_baseAddr + I2STAT_OFFSET)) != (status))
 ERCD 	  	I2C_Init(uint8_t I2cChannel, uint16_t I2cMode, uint16_t I2cClk, uint8_t I2cAddress);
 uint8_t 	I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr);
 ERCD 		I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cData);
@@ -113,7 +114,7 @@ uint8_t     EEPROM_ReadByte(uint8_t i2c_channel, uint32_t addr);
 ERCD        EEPROM_WriteByte(uint8_t i2c_channel, uint32_t addr, uint8_t data);
 uint32_t I2C_BASE_SEL(uint8_t i2c_channel);
 ERCD I2C_START(uint32_t i2c_baseAddr);
-ERCD I2C_ACK(uint32_t i2c_baseAddr,uint8_t status);
+//ERCD I2C_ACK(uint32_t i2c_baseAddr,uint8_t status);
 ERCD I2C_STOP(uint32_t i2c_baseAddr);
 void I2CInit(unsigned int fi2c);
 unsigned char I2CWriteByte(unsigned char sla, unsigned char data,unsigned char address);
