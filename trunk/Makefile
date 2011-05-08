@@ -34,7 +34,7 @@ vpath %.o $(SRCDIR)
 LSEARCHGCC = "/home/fanghuaqi/CodeSourcery/Sourcery_G++_Lite/lib/gcc/arm-none-eabi/4.4.1"
 
 # Linker script
-LINKFILE	= lpc2478_sdram.ld
+LINKFILE	= lpc2478_ram.ld
 
 # C source files
 CSRCS = lpc2478_main.c\

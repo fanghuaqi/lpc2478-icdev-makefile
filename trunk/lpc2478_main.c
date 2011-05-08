@@ -22,27 +22,27 @@ void main(){
     //CH452_Init();												/*init ch452 keyboard and led*/
     //EINT0_Init(FALLING_EDGE,HIGHEST_PRIORITY);
     UART_Printf("Hello World!\n");
-    EEPROM_Init(I2C_CHL0,EEPROM_CLK);
+    EEPROM_Init(I2C_CHL1,EEPROM_CLK);
     //I2CInit(40000);
     Delay_ms(10);
 
 
     while(1){
-    	for (i=0x0;i<0x10;i++){
+    	for (i=0x0;i<0x20;i++){
     	    	//
     		//I2CWriteByte(0xa0, i, i);
-    		EEPROM_WriteByte(I2C_CHL0,i,i);
-    	    Delay_ms(2);
+    		EEPROM_WriteByte(I2C_CHL1,i,i);
+    	    //Delay_ms(5);
     	    	//EEPROM_ReadByte(I2C_CHL1,i);
     	}
     	//Delay_ms(1);
-    	for (i=0x0;i<0x10;i++){
-    		UART_Printf("%d:%d\n",i,EEPROM_ReadByte(I2C_CHL0,i));//I2CReadByte(0xa0, i));
+    	for (i=0x0;i<0x20;i++){
+    		UART_Printf("%d:%d\n",i,EEPROM_ReadByte(I2C_CHL1,i));//I2CReadByte(0xa0, i));
     		//EEPROM_ReadByte(I2C_CHL1,i);
-    		Delay_ms(1);
+    		//Delay_ms(5);
     	}
-    	Delay_ms(1000);
-    	UART_Printf("Hello World!\n");
+    	//Delay_ms(1000);
+    	//UART_Printf("Hello World!\n");
 //    	temp = gl_CH452_key;									/*read the ch452 key */
 //    	if (temp & 0x80){   									/*the first time pressed?*/
 //    		pressed = 0;
