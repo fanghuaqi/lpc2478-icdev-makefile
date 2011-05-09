@@ -15,5 +15,7 @@
 
 void LED_Init(void);
 void LED_Output(uint8_t ledvalue);
+void Buzzer_Init(void);
+void Buzzer(uint8_t buzzer);
 void Delay_ms(uint32_t ms);
 #endif

@@ -672,3 +672,89 @@ unsigned char I2CReadByte(unsigned char sla, unsigned char address)
 /*********************************************************************************
 **                            End Of File
 *********************************************************************************/
+/** 
+ * 
+ * 
+ * @param i2c_baseAddr 
+ * 
+ * @return 
+ */
+ERCD I2C_StartTransmission(uint32_t i2c_baseAddr)
+{
+    setreg(i2c_baseAddr + I2CONCLR_OFFSET, (I2CONCLR_STAC|I2CONCLR_SIC|I2CONCLR_AAC));/*clear status*/
+	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_I2EN);          /*使能I2C作为主机*/
+	setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STA);          	/*发送一个起始状态位STA*/
+    I2C_ACK(i2c_baseAddr,0x08);
+    return ERCD_OK;
+}
+/** 
+ * 
+ * 
+ * @param i2c_baseAddr 
+ * @param slaveAddr 
+ * @param operation 
+ * 
+ * @return 
+ */
+ERCD I2C_SendAddr(uint32_t i2c_baseAddr,uint8_t slaveAddr,uint8_t operation)
+{
+    if (operation == I2C_WRITE_OP){
+        I2C_SEND(i2c_baseAddr,slaveAddr|EEPROM_WRITE);
+        I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_STAC|I2CONCLR_SIC);
+        I2C_ACK(i2c_baseAddr,0x18);
+    }else if (operation == I2C_READ_OP){
+        I2C_SEND(i2c_baseAddr,slaveAddr|EEPROM_READ);
+        I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_STAC|I2CONCLR_SIC);
+        I2C_ACK(i2c_baseAddr,0x40);
+    }else{
+        return ERCD_ARG_ERR;
+    }
+}
+/** 
+ * 
+ * 
+ * @param i2c_baseAddr 
+ * @param i2c_data 
+ * 
+ * @return 
+ */
+ERCD I2C_SendByte(uint32_t i2c_baseAddr, uint8_t i2c_data)
+{
+    I2C_SEND(i2c_baseAddr,(uint8_t)(i2c_data));
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC|I2CONCLR_AAC);
+    I2C_ACK(i2c_baseAddr,0x28);
+}
+/** 
+ * 
+ * 
+ * @param i2c_baseAddr 
+ * @param ack_bit 
+ * 
+ * @return 
+ */
+uint8_t I2C_ReceiveByte(uint32_t i2c_baseAddr, uint8_t ack_bit)
+{
+    uint8_t eeprom_data;
+
+    I2C_CLEAR_STAT(i2c_baseAddr,I2CONCLR_SIC|I2CONCLR_AAC);
+    if (ack_bit & ACK_BIT){
+        I2C_ACK(i2c_baseAddr,0x50);
+    }else {
+        I2C_ACK(i2c_baseAddr,0x58);
+    }
+    eeprom_data=I2C_READ(i2c_baseAddr);
+}
+/** 
+ * 
+ * 
+ * @param i2c_baseAddr 
+ * 
+ * @return 
+ */
+ERCD I2C_StopTransmission(uint32_t i2c_baseAddr)
+{
+    setreg(i2c_baseAddr + I2CONSET_OFFSET, I2CONSET_STO);						/*发送停止位STO*/  /*注意：必须先发数据再清除SI等位*/
+    setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC|I2CONCLR_AAC);         
+    while(getreg(i2c_baseAddr + I2CONSET_OFFSET) & I2CONSET_STO );
+    return ERCD_OK;
+}
