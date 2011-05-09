@@ -15,32 +15,40 @@ void main(){
 
 	//uint8_t temp,col,row,pressed,i = 0;
 	//int8_t j = 0;
-	uint32_t i = 0;
+	volatile uint32_t i = 0;
     PLL_Init();
-    UART_Init(115200);
+
+    //UART_Init(115200);
     //I2C_Init(I2C_CHL0,I2CMASTER,I2C0_CLK,I2C0_ADDR); 			/*init the i2c0 as master*/
     //CH452_Init();												/*init ch452 keyboard and led*/
     //EINT0_Init(FALLING_EDGE,HIGHEST_PRIORITY);
-    UART_Printf("Hello World!\n");
-    EEPROM_Init(I2C_CHL1,EEPROM_CLK);
+    //UART_Printf("Hello World!\n");
+    //EEPROM_Init(I2C_CHL1,EEPROM_CLK);
+    Buzzer_Init();
     //I2CInit(40000);
-    Delay_ms(10);
+   // Delay_ms(10);
 
 
     while(1){
-    	for (i=0x0;i<0x40;i++){
-    	    	//
-    		//I2CWriteByte(0xa0, i, 3);
-    		EEPROM_WriteByte(I2C_CHL1,i,i);
-    	    //Delay_ms(40);
-    	    	//EEPROM_ReadByte(I2C_CHL1,i);
-    	}
+//    	for (i=0x0;i<0x40;i++){
+//    	    	//
+//    		//I2CWriteByte(0xa0, i, 3);
+//    		//EEPROM_WriteByte(I2C_CHL1,i,i);
+//    	    //Delay_ms(40);
+//    	    	//EEPROM_ReadByte(I2C_CHL1,i);
+//    	}
+//    	//Delay_ms(1);
+//    	for (i=0x0;i<0x40;i++){
+//    		UART_Printf("%d:%d\n",i,EEPROM_ReadByte(I2C_CHL1,i));//I2CReadByte(0xa0, i));
+//    		//EEPROM_ReadByte(I2C_CHL1,i);
+//    		//Delay_ms(50);
+//    	}
+    	Buzzer(1);
+    	for (i=0x0;i<0x400;i++);
     	//Delay_ms(1);
-    	for (i=0x0;i<0x40;i++){
-    		UART_Printf("%d:%d\n",i,EEPROM_ReadByte(I2C_CHL1,i));//I2CReadByte(0xa0, i));
-    		//EEPROM_ReadByte(I2C_CHL1,i);
-    		Delay_ms(50);
-    	}
+    	Buzzer(0);
+    	for (i=0x0;i<0x400;i++);
+    	//Delay_ms(1);
     	//Delay_ms(1000);
     	//UART_Printf("Hello World!\n");
 //    	temp = gl_CH452_key;									/*read the ch452 key */

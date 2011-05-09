@@ -55,6 +55,7 @@
 /*I2C Read Or Write Define*/
 #define I2C_READ_OP			 1
 #define I2C_WRITE_OP		 0
+#define ACK_BIT              1
 /*CH452 LED color definitions*/
 #define LED_OFF              0
 #define LED_RED              1
@@ -116,6 +117,11 @@ uint32_t I2C_BASE_SEL(uint8_t i2c_channel);
 ERCD I2C_START(uint32_t i2c_baseAddr);
 //ERCD I2C_ACK(uint32_t i2c_baseAddr,uint8_t status);
 ERCD I2C_STOP(uint32_t i2c_baseAddr);
+ERCD I2C_StartTransmission(uint32_t i2c_baseAddr);
+ERCD I2C_SendAddr(uint32_t i2c_baseAddr,uint8_t slaveAddr,uint8_t operation);
+ERCD I2C_SendByte(uint32_t i2c_baseAddr, uint8_t i2c_data);
+uint8_t I2C_ReceiveByte(uint32_t i2c_baseAddr, uint8_t ack_bit);
+ERCD I2C_StopTransmission(uint32_t i2c_baseAddr);
 void I2CInit(unsigned int fi2c);
 unsigned char I2CWriteByte(unsigned char sla, unsigned char data,unsigned char address);
 unsigned char I2CReadByte(unsigned char sla, unsigned char address);
