@@ -16,21 +16,43 @@ void main(){
 	//uint8_t temp,col,row,pressed,i = 0;
 	//int8_t j = 0;
 	volatile uint32_t i = 0;
+	RTCTime local_time, alarm_time, current_time;
     PLL_Init();
 
-    //UART_Init(115200);
+    UART_Init(115200);
     //I2C_Init(I2C_CHL0,I2CMASTER,I2C0_CLK,I2C0_ADDR); 			/*init the i2c0 as master*/
     //CH452_Init();												/*init ch452 keyboard and led*/
     //EINT0_Init(FALLING_EDGE,HIGHEST_PRIORITY);
-    //UART_Printf("Hello World!\n");
+    UART_Printf("Hello World!\n");
     //EEPROM_Init(I2C_CHL1,EEPROM_CLK);
     Buzzer_Init();
+    RTC_Init();
     //I2CInit(40000);
    // Delay_ms(10);
-
-
+	local_time.RTC_Sec = 0;
+	local_time.RTC_Min = 10;
+	local_time.RTC_Hour = 15;
+	local_time.RTC_Mday = 10;
+	local_time.RTC_Wday = 1;
+	local_time.RTC_Yday = 180;		/* current date 05/10/2011 */
+	local_time.RTC_Mon = 5;
+	local_time.RTC_Year = 2011;
+	//RTC_SetTime( local_time );		/* Set local time */
+	alarm_time.RTC_Sec = 0;
+	alarm_time.RTC_Min = 11;
+	alarm_time.RTC_Hour = 15;
+	alarm_time.RTC_Mday = 10;
+	alarm_time.RTC_Wday = 1;
+	alarm_time.RTC_Yday = 180;		/* alarm date 05/10/2011 */
+	alarm_time.RTC_Mon = 5;
+	alarm_time.RTC_Year = 2011;
+	RTC_SetAlarm(alarm_time);
+	RTC_Start();
     while(1){
-//    	for (i=0x0;i<0x40;i++){
+    	current_time = RTC_GetTime();
+    	UART_Printf("Time: %d-%d-%d\t%d:%d:%d\n",current_time.RTC_Year,current_time.RTC_Mon,current_time.RTC_Mday,current_time.RTC_Hour,current_time.RTC_Min,current_time.RTC_Sec);
+    	Delay_ms(40);
+    	//for (i=0x0;i<0x40;i++){
 //    	    	//
 //    		//I2CWriteByte(0xa0, i, 3);
 //    		//EEPROM_WriteByte(I2C_CHL1,i,i);
@@ -43,11 +65,11 @@ void main(){
 //    		//EEPROM_ReadByte(I2C_CHL1,i);
 //    		//Delay_ms(50);
 //    	}
-    	Buzzer(1);
-    	for (i=0x0;i<0x400;i++);
+    	//Buzzer(1);
+    	//for (i=0x0;i<0x400;i++);
     	//Delay_ms(1);
-    	Buzzer(0);
-    	for (i=0x0;i<0x400;i++);
+    	//Buzzer(0);
+    	//for (i=0x0;i<0x400;i++);
     	//Delay_ms(1);
     	//Delay_ms(1000);
     	//UART_Printf("Hello World!\n");
