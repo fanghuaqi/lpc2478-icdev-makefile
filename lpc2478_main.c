@@ -30,14 +30,14 @@ void main(){
     //I2CInit(40000);
    // Delay_ms(10);
 	local_time.RTC_Sec = 0;
-	local_time.RTC_Min = 10;
-	local_time.RTC_Hour = 15;
-	local_time.RTC_Mday = 10;
-	local_time.RTC_Wday = 1;
-	local_time.RTC_Yday = 180;		/* current date 05/10/2011 */
-	local_time.RTC_Mon = 5;
+	local_time.RTC_Min = 0;
+	local_time.RTC_Hour = 0;
+	local_time.RTC_Mday = 1;
+	local_time.RTC_Wday = 0;
+	local_time.RTC_Yday = 1;		/* current date 05/10/2011 */
+	local_time.RTC_Mon = 1;
 	local_time.RTC_Year = 2011;
-	//RTC_SetTime( local_time );		/* Set local time */
+	RTC_SetTime( local_time );		/* Set local time */
 	alarm_time.RTC_Sec = 0;
 	alarm_time.RTC_Min = 11;
 	alarm_time.RTC_Hour = 15;
