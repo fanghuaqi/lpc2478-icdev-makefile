@@ -25,6 +25,7 @@ ERCD RTC_Init(void)
     setregbits(RTC_CIIR,MASK_ALL,0);  /*no interrupt*/
     setregbits(RTC_CISS,MASK_ALL,0);  /*no subsecond*/
     setregbits(RTC_CCR,MASK_ALL,0x10);  /*clock source select as RTC*/
+    setregbits(PCONP,MASK_ALL,0 << 9);  /* use battery to power the rtc*/
     return ERCD_OK;
 }
 ERCD RTC_Start(void)
@@ -41,14 +42,16 @@ ERCD RTC_Stop(void)
 
 ERCD RTC_SetTime(RTCTime Time)
 {
-    RTC_SEC = Time.RTC_Sec;
+	setregbits(RTC_CCR,(~(1<<1)),(1<<0));/*ctc reset*/
+	RTC_SEC = Time.RTC_Sec;
     RTC_MIN = Time.RTC_Min;
     RTC_HOUR = Time.RTC_Hour;
     RTC_DOM = Time.RTC_Mday;
     RTC_DOW = Time.RTC_Wday;
     RTC_DOY = Time.RTC_Yday;
     RTC_MONTH = Time.RTC_Mon;
-    RTC_YEAR = Time.RTC_Year;    
+    RTC_YEAR = Time.RTC_Year;
+    setregbits(RTC_CCR,(~(1<<1)),(0<<0));/*ctc reset*/
     return ERCD_OK;
 }
 
