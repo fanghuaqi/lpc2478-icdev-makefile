@@ -29,9 +29,9 @@ void main(){
     RTC_Init();
     //I2CInit(40000);
    // Delay_ms(10);
-	local_time.RTC_Sec = 0;
-	local_time.RTC_Min = 60;
-	local_time.RTC_Hour = 10;
+	local_time.RTC_Sec = 59;
+	local_time.RTC_Min = 19;
+	local_time.RTC_Hour = 11;
 	local_time.RTC_Mday = 11;
 	local_time.RTC_Wday = 3;
 	local_time.RTC_Yday = 131;		/* current date 05/10/2011 */

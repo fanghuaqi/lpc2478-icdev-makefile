@@ -90,7 +90,7 @@ RTCTime RTC_GetTime( void )
 //    LocalTime.RTC_Hour = (ctime0>>16)&23;
 //    LocalTime.RTC_Mday = (ctime1>>0)&31;
 //    LocalTime.RTC_Wday = (ctime0>>24)&6;
-//    LocalTime.RTC_Yday = (ctime2>>0)&365;
+//    LocalTime.RTC_Yday = (ctime2>>0)&366;
 //    LocalTime.RTC_Mon = (ctime1>>8)&12;
 //    LocalTime.RTC_Year = (ctime1>>16)&4095;
     LocalTime.RTC_Sec = RTC_SEC;
