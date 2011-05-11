@@ -24,7 +24,7 @@ ERCD RTC_Init(void)
 //    setregbits(RTC_AMR,MASK_ALL,0);  /*compare all the value when alarm*/
 //    setregbits(RTC_CIIR,MASK_ALL,0);  /*no interrupt*/
 //    setregbits(RTC_CISS,MASK_ALL,0);  /*no subsecond*/
-    RTC_AMR = 0x01;
+    RTC_AMR = 0x01; //don't compare seconds
     RTC_CIIR = 0;
     RTC_CISS = 0;
     RTC_CCR = 0x10;
