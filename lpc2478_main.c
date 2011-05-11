@@ -39,14 +39,14 @@ void main(){
 	local_time.RTC_Year = 2011;
 	//RTC_SetTime( local_time );		/* Set local time */
 	alarm_time.RTC_Sec = 0;
-	alarm_time.RTC_Min = 11;
-	alarm_time.RTC_Hour = 15;
-	alarm_time.RTC_Mday = 10;
-	alarm_time.RTC_Wday = 1;
-	alarm_time.RTC_Yday = 180;		/* alarm date 05/10/2011 */
+	alarm_time.RTC_Min = 55;
+	alarm_time.RTC_Hour = 14;
+	alarm_time.RTC_Mday = 11;
+	alarm_time.RTC_Wday = 3;
+	alarm_time.RTC_Yday = 131;		/* alarm date 05/10/2011 */
 	alarm_time.RTC_Mon = 5;
 	alarm_time.RTC_Year = 2011;
-	//RTC_SetAlarm(alarm_time);
+	RTC_SetAlarm(alarm_time);
 	RTC_Start();
     while(1){
     	current_time = RTC_GetTime();
