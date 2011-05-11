@@ -39,7 +39,7 @@ void main(){
 	local_time.RTC_Year = 2011;
 	//RTC_SetTime( local_time );		/* Set local time */
 	alarm_time.RTC_Sec = 0;
-	alarm_time.RTC_Min = 55;
+	alarm_time.RTC_Min = 0;
 	alarm_time.RTC_Hour = 14;
 	alarm_time.RTC_Mday = 11;
 	alarm_time.RTC_Wday = 3;
