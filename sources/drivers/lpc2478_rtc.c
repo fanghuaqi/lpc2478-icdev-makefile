@@ -37,8 +37,6 @@ ERCD RTC_Init(void)
 ERCD RTC_Start(void)
 {
 	RTC_ILR = 0x7; //clear the interrupt bits must do this to let the alarm pin to be low
-
-	RTC_ILR = 0x0; //disable interrupt
 	RTC_CCR = 0x11;
 	//setregbits(RTC_CCR,(~(0x11<<0)),(0x11<<0));/*enable rtc clock*/
     //setregbits(RTC_ILR,(~(0x7<<0)),(0<<0));/*do noting*/
