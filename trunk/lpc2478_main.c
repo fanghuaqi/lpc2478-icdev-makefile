@@ -30,14 +30,14 @@ void main(){
     //I2CInit(40000);
    // Delay_ms(10);
 	local_time.RTC_Sec = 0;
-	local_time.RTC_Min = 0;
-	local_time.RTC_Hour = 0;
-	local_time.RTC_Mday = 1;
-	local_time.RTC_Wday = 0;
-	local_time.RTC_Yday = 1;		/* current date 05/10/2011 */
-	local_time.RTC_Mon = 1;
+	local_time.RTC_Min = 60;
+	local_time.RTC_Hour = 10;
+	local_time.RTC_Mday = 11;
+	local_time.RTC_Wday = 3;
+	local_time.RTC_Yday = 131;		/* current date 05/10/2011 */
+	local_time.RTC_Mon = 5;
 	local_time.RTC_Year = 2011;
-	RTC_SetTime( local_time );		/* Set local time */
+	//RTC_SetTime( local_time );		/* Set local time */
 	alarm_time.RTC_Sec = 0;
 	alarm_time.RTC_Min = 11;
 	alarm_time.RTC_Hour = 15;
@@ -46,12 +46,12 @@ void main(){
 	alarm_time.RTC_Yday = 180;		/* alarm date 05/10/2011 */
 	alarm_time.RTC_Mon = 5;
 	alarm_time.RTC_Year = 2011;
-	RTC_SetAlarm(alarm_time);
+	//RTC_SetAlarm(alarm_time);
 	RTC_Start();
     while(1){
     	current_time = RTC_GetTime();
     	UART_Printf("Time: %d-%d-%d\t%d:%d:%d\n",current_time.RTC_Year,current_time.RTC_Mon,current_time.RTC_Mday,current_time.RTC_Hour,current_time.RTC_Min,current_time.RTC_Sec);
-    	Delay_ms(40);
+    	Delay_ms(1000);
     	//for (i=0x0;i<0x40;i++){
 //    	    	//
 //    		//I2CWriteByte(0xa0, i, 3);

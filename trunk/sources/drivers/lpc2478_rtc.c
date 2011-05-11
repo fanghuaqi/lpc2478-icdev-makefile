@@ -20,18 +20,26 @@
 
 ERCD RTC_Init(void)
 {
-    setregbits(PCONP,MASK_ALL,1 << 9);  /* power on  the rtc*/
-    setregbits(RTC_AMR,MASK_ALL,0);  /*compare all the value when alarm*/
-    setregbits(RTC_CIIR,MASK_ALL,0);  /*no interrupt*/
-    setregbits(RTC_CISS,MASK_ALL,0);  /*no subsecond*/
-    setregbits(RTC_CCR,MASK_ALL,0x10);  /*clock source select as RTC*/
-    setregbits(PCONP,MASK_ALL,0 << 9);  /* use battery to power the rtc*/
+    setregbits(PCONP,(~(1 << 9)),1 << 9);  /* power on  the rtc*/
+//    setregbits(RTC_AMR,MASK_ALL,0);  /*compare all the value when alarm*/
+//    setregbits(RTC_CIIR,MASK_ALL,0);  /*no interrupt*/
+//    setregbits(RTC_CISS,MASK_ALL,0);  /*no subsecond*/
+    RTC_AMR = 0;
+    RTC_CIIR = 0;
+    RTC_CISS = 0;
+    RTC_CCR = 0x10;
+//    setregbits(RTC_CCR,MASK_ALL,0x10);  /*clock source select as RTC*/
+    //RTC_PREINT = PREINT_RTC;
+    //RTC_PREFRAC = PREFRAC_RTC;
+    setregbits(PCONP,(~(1 << 9)),1 << 9);  /* use battery to power the rtc*/
     return ERCD_OK;
 }
 ERCD RTC_Start(void)
 {
-    setregbits(RTC_CCR,(~(1<<0)),(1<<0));/*enable rtc clock*/
-    setregbits(RTC_ILR,(~(0x7<<0)),(0<<0));/*do noting*/
+	RTC_ILR = 0;
+	RTC_CCR = 0x11;
+	//setregbits(RTC_CCR,(~(0x11<<0)),(0x11<<0));/*enable rtc clock*/
+    //setregbits(RTC_ILR,(~(0x7<<0)),(0<<0));/*do noting*/
     return ERCD_OK;
 }
 ERCD RTC_Stop(void)
@@ -42,7 +50,8 @@ ERCD RTC_Stop(void)
 
 ERCD RTC_SetTime(RTCTime Time)
 {
-	setregbits(RTC_CCR,(~(1<<1)),(1<<0));/*ctc reset*/
+	//setregbits(PCONP,(~(1 << 9)),1 << 9);  /* power on  the rtc*/
+	setregbits(RTC_CCR,(~(1<<1)),(1<<1));/*ctc reset*/
 	RTC_SEC = Time.RTC_Sec;
     RTC_MIN = Time.RTC_Min;
     RTC_HOUR = Time.RTC_Hour;
@@ -52,6 +61,7 @@ ERCD RTC_SetTime(RTCTime Time)
     RTC_MONTH = Time.RTC_Mon;
     RTC_YEAR = Time.RTC_Year;
     setregbits(RTC_CCR,(~(1<<1)),(0<<0));/*ctc reset*/
+    //setregbits(PCONP,(~(1 << 9)),0 << 9);  /* use battery to power the rtc*/
     return ERCD_OK;
 }
 
@@ -71,7 +81,18 @@ ERCD RTC_SetAlarm(RTCTime Alarm)
 RTCTime RTC_GetTime( void ) 
 {
     RTCTime LocalTime;
-    
+    uint32_t ctime0,ctime1,ctime2;
+    ctime0 = RTC_CTIME0;
+    ctime1 = RTC_CTIME1;
+    ctime2 = RTC_CTIME2;
+//    LocalTime.RTC_Sec = ctime0&63;
+//    LocalTime.RTC_Min = (ctime0>>8)&63;
+//    LocalTime.RTC_Hour = (ctime0>>16)&23;
+//    LocalTime.RTC_Mday = (ctime1>>0)&31;
+//    LocalTime.RTC_Wday = (ctime0>>24)&6;
+//    LocalTime.RTC_Yday = (ctime2>>0)&365;
+//    LocalTime.RTC_Mon = (ctime1>>8)&12;
+//    LocalTime.RTC_Year = (ctime1>>16)&4095;
     LocalTime.RTC_Sec = RTC_SEC;
     LocalTime.RTC_Min = RTC_MIN;
     LocalTime.RTC_Hour = RTC_HOUR;
