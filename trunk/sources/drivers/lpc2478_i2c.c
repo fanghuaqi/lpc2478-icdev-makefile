@@ -124,7 +124,7 @@ uint8_t I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr)
     setreg(i2c_baseAddr + I2DAT_OFFSET, SlaveAddr + I2C_READ_OP);    				/*设置读取的从设备的地址*/
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_STAC|I2CONCLR_SIC);			/*清除SI,STR,启动串行传输*/
           
-    while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x40)				    		/*起始字必须为0x8*/
+    while((getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x40)&&(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x40))				    		/*起始字必须为0x8*/
     {
 //    	timeout ++;
 //		if (timeout > MAX_TIMEOUT){
@@ -134,7 +134,7 @@ uint8_t I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr)
     }
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);						/*清除SI位，准备读取数据*/
 
-    while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x58)							/*接收数据，无ACK*/
+    while((getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x58)&&(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x58))							/*接收数据，无ACK*/
     {
 //    	timeout ++;
 //		if (timeout > MAX_TIMEOUT){
@@ -204,7 +204,7 @@ ERCD I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cDat
 	setreg(i2c_baseAddr + I2DAT_OFFSET, SlaveAddr + I2C_WRITE_OP);    				/*设置读取的从设备的地址*/
 	setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_STAC|I2CONCLR_SIC);			/*清除SI,STR,启动串行传输*/
      
-	while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x18)//;							/*等待SLA+W传输完毕*/
+	while((getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x18)&&(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x18))//;							/*等待SLA+W传输完毕*/
 	{
 //    	timeout ++;
 //		if (timeout > MAX_TIMEOUT){
@@ -215,7 +215,7 @@ ERCD I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cDat
     setreg(i2c_baseAddr + I2DAT_OFFSET, I2cData);    								/*设置读取的从设备的地址*/
     setreg(i2c_baseAddr + I2CONCLR_OFFSET, I2CONCLR_SIC);						/*清除SI标志*/
    
-    while(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x28)//;						/*等待数据传输完毕*/
+    while((getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x28)&&(getreg(i2c_baseAddr + I2STAT_OFFSET) != 0x28))//;						/*等待数据传输完毕*/
     {
 //    	timeout ++;
 //		if (timeout > MAX_TIMEOUT){
@@ -323,7 +323,11 @@ ERCD  CH452_LED_OPEN_SEL(uint8_t led_num, uint8_t colorType)
 
 ERCD CH452_Init(void)
 {
-    I2C_Master_WriteByte(I2C_CHL0, CH452_ACK_CMD, CH452_ACK_DATA); 				/*选择CH452的2线接口ACK。这个必须最先发出去*/
+	PINSEL10 = 0x00;   //ETM interface is disabled. must set this
+	setregbits(PINSEL5,(~(0x3<<14)),0x0);
+	setregbits(FIO2DIR2,~(0x1<<7),(0x1<<7));  /*p2.0 output*/
+	setregbits(FIO2SET2,~(0x1<<7),(0x1<<7));   /*p2.0 low*/
+	I2C_Master_WriteByte(I2C_CHL0, CH452_ACK_CMD, CH452_ACK_DATA); 				/*选择CH452的2线接口ACK。这个必须最先发出去*/
     I2C_Master_WriteByte(I2C_CHL0, CH452_SYSON2_CMD, CH452_SYSON2_DATA);		/*打开键盘，显示驱动*/
     I2C_Master_WriteByte(I2C_CHL0, CH452_NO_BCD_CMD, 0x40); 					/*设置非BCD译码,扫描极限为4,显示驱动占空比为100%*/
     I2C_Master_WriteByte(I2C_CHL0, CH452_TWINKLE_CMD, 0x00); 					/*设置不闪烁*/
