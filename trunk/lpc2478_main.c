@@ -26,6 +26,7 @@ void main(){
     UART_Printf("Hello World!\n");
     //EEPROM_Init(I2C_CHL1,EEPROM_CLK);
     Buzzer_Init();
+    pwm_init(PWM_CHANNEL_1,100);
     RTC_Init();
     //I2CInit(40000);
    // Delay_ms(10);
@@ -49,6 +50,8 @@ void main(){
 	RTC_SetAlarm(alarm_time);
 	RTC_Start();
     while(1){
+    	pwm_setpwm1duty(PWM_PORT_1,0);
+    	pwm_setpwm1duty(PWM_PORT_2,30);
     	current_time = RTC_GetTime();
     	UART_Printf("Time: %d-%d-%d\t%d:%d:%d\n",current_time.RTC_Year,current_time.RTC_Mon,current_time.RTC_Mday,current_time.RTC_Hour,current_time.RTC_Min,current_time.RTC_Sec);
     	Delay_ms(1000);
