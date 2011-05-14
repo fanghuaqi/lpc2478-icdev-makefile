@@ -30,6 +30,7 @@
 #include  "lpc2478_pwm.h"
 
 extern volatile uint8_t gl_pCH452_key;
+
 #endif
 
 
