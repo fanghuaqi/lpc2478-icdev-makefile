@@ -27,6 +27,7 @@
 #include  "lpc2478_i2c_cmd.h"
 #include  "lpc2478_irq.h"
 #include  "lpc2478_rtc.h"
+#include  "lpc2478_pwm.h"
 
 extern volatile uint8_t gl_pCH452_key;
 #endif
