@@ -34,18 +34,9 @@ typedef  unsigned char   ERCD;
 #define  MASK_ALL						 0xffffffff
 
 
-Inline uint32_t
-sil_rew_mem(void *mem)
-{
-	uint32_t	data;
 
-	data = *((volatile uint32_t *) mem);
-	return(data);
-}
+#define sil_rew_mem(mem)               mem
+#define sil_wrw_mem(mem,data)          mem  = (data)
 
-Inline void
-sil_wrw_mem(void *mem, uint32_t data)
-{
-	*((volatile uint32_t *) mem) = data;
-}
+
 #endif
