@@ -19,11 +19,11 @@
 #define I2C_CHL1 	1
 #define I2C_CHL2 	2
 /*channel clk definitions*/
-#define	I2C0_CLK	40000
+#define	I2C0_CLK	4000
 #define I2C1_CLK 	4000
 #define I2C2_CLK 	4000
 /*channel addr definitions*/
-#define	I2C0_ADDR	0x60   							/*由于CH452的ADDR引脚被强制拉低，所以addr配置为40h*/
+#define	I2C0_ADDR	0x60   							/*由于CH452的ADDR引脚被强制拉高，所以addr配置为60h*/
 #define I2C1_ADDR 	0x31
 #define I2C2_ADDR 	0x82
 #define EEPROM_ADDR 0xA0
