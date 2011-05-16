@@ -18,18 +18,22 @@ void main(){
 	volatile uint32_t i = 0,tem;
 	RTCTime local_time, alarm_time, current_time;
     PLL_Init();
-
+    PINSEL10 = 0x00;   //ETM interface is disabled. must set this
     UART_Init(115200);
 
     //EINT0_Init(FALLING_EDGE,HIGHEST_PRIORITY);
     UART_Printf("Hello World!\n");
     //EEPROM_Init(I2C_CHL1,EEPROM_CLK);
     //Buzzer_Init();
-    //pwm_init(PWM_CHANNEL_1,1000);
+    pwm_init(PWM_CHANNEL_1,1000);
+    pwm_setpwm1duty(PWM_PORT_2,20);
     //timer2_capinit();
     //RTC_Init();
+
+    //I2C_Init(I2C_CHL1,I2CMASTER,I2C0_CLK,EEPROM_ADDR); 			/*init the i2c0 as master*/
     I2C_Init(I2C_CHL0,I2CMASTER,I2C0_CLK,I2C0_ADDR); 			/*init the i2c0 as master*/
-	CH452_Init();												/*init ch452 keyboard and led*/
+    //I2C_Master_WriteByte(I2C_CHL1, EEPROM_ADDR, CH452_ACK_DATA);
+    CH452_Init();												/*init ch452 keyboard and led*/
     //I2CInit(40000);
    // Delay_ms(10);
 	local_time.RTC_Sec = 59;
