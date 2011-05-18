@@ -4,7 +4,7 @@
  *  Created on: 2011-4-5
  *      Author: fanghuaqi
  */
-# include "lpc2478_irq.h"
+#include "lpc2478_irq.h"
 
 void  EINT0_ISR (void) __attribute__ ((interrupt("IRQ")));
 /******************************************************************************
@@ -95,6 +95,6 @@ void EINT0_ISR()
 		ext3_int_status = IO2_INT_STAT_R|IO2_INT_STAT_F;
 		IO2_INT_CLR = ext3_int_status;
 	}
-
-	VICVectAddr = 0;		/*Acknowledge Interrupt*/
+	/*Acknowledge Interrupt*/
+	sil_wrw_mem((void *)VICVectAddr, 0);
 }
