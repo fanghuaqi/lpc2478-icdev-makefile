@@ -15,8 +15,8 @@
  * @0.1 Byfanghuaqi  Tue May 10 14:23:34 2011 Create orignal file
  * ======================================================================================
  */
-#ifndef _LPC2478_RTC_H
-#define _LPC2478_RTC_H
+#ifndef TARGET_RTC_H
+#define TARGET_RTC_H
 
 #include "lpc2478_inc.h"
 
@@ -32,8 +32,8 @@ typedef struct {
 } RTCTime;
 
 /* rtc function marco */
-#define RTC_SET_ALARM_MASK(AlarmMask)           RTC_AMR = (AlarmMask)
-#define RTC_CTCRST()                            setregbits(RTC_CCR,(~(1<<1)),(1<<1))
+#define RTC_SET_ALARM_MASK(AlarmMask)           sil_wrw_mem((void *)RTC_AMR, (AlarmMask))
+#define RTC_CTCRST()                            sil_wrw_mem((void *)RTC_CCR,(1<<1))
 
 #define IMSEC		0x00000001
 #define IMMIN		0x00000002

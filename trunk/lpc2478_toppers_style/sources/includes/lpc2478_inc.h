@@ -23,6 +23,7 @@
 #include  "target_hw.h"
 #include  "target_irq.h"
 #include  "target_pwm.h"
+#include  "target_rtc.h"
 
 extern volatile uint8_t gl_pCH452_key;
 
