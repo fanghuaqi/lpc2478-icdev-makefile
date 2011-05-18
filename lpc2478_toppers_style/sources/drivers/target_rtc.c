@@ -16,75 +16,80 @@
  * ======================================================================================
  */
 
-#include "lpc2478_rtc.h"
+#include "target_rtc.h"
 
 ERCD RTC_Init(void)
 {
-    setregbits(PCONP,(~(1 << 9)),1 << 9);  /* power on  the rtc*/
-//    setregbits(RTC_AMR,MASK_ALL,0);  /*compare all the value when alarm*/
-//    setregbits(RTC_CIIR,MASK_ALL,0);  /*no interrupt*/
-//    setregbits(RTC_CISS,MASK_ALL,0);  /*no subsecond*/
-    RTC_AMR = 0x01; //don't compare seconds
-    RTC_CIIR = 0;
-    RTC_CISS = 0;
-    RTC_CCR = 0x10;
-//    setregbits(RTC_CCR,MASK_ALL,0x10);  /*clock source select as RTC*/
-    //RTC_PREINT = PREINT_RTC;
-    //RTC_PREFRAC = PREFRAC_RTC;
-    setregbits(PCONP,(~(1 << 9)),1 << 9);  /* use battery to power the rtc*/
+	/*power on  the rtc*/
+	sil_wrw_mem((void *)PCONP,sil_rew_mem((void *)PCONP)|(1<<9));
+	/*don't compare seconds*/
+	sil_wrw_mem((void *)RTC_AMR, 0x01);
+	sil_wrw_mem((void *)RTC_CIIR, 0x0);
+	sil_wrw_mem((void *)RTC_CISS, 0x0);
+	/*RTC clock source select as RTC*/
+	sil_wrw_mem((void *)RTC_CCR, 0x10);
+
     return ERCD_OK;
 }
 ERCD RTC_Start(void)
 {
-	RTC_ILR = 0x7; //clear the interrupt bits must do this to let the alarm pin to be low
-	RTC_CCR = 0x11;
-	//setregbits(RTC_CCR,(~(0x11<<0)),(0x11<<0));/*enable rtc clock*/
-    //setregbits(RTC_ILR,(~(0x7<<0)),(0<<0));/*do noting*/
+	/*clear the interrupt bits must do this to let the alarm pin to be low*/
+	sil_wrw_mem((void *)RTC_ILR, 0x7);
+	/*enable rtc clock*/
+	sil_wrw_mem((void *)RTC_CCR, 0x11);
+
     return ERCD_OK;
 }
 ERCD RTC_Stop(void)
 {
-     setregbits(RTC_CCR,(~(1<<0)),(0<<0));/*disable rtc clock*/
-     return ERCD_OK;
+	/*disable rtc clock*/
+	sil_wrw_mem((void *)RTC_CCR,sil_rew_mem((void *)PCONP)&(~(1<<0)));
+
+	return ERCD_OK;
 }
 
 ERCD RTC_SetTime(RTCTime Time)
 {
-	//setregbits(PCONP,(~(1 << 9)),1 << 9);  /* power on  the rtc*/
-	setregbits(RTC_CCR,(~(1<<1)),(1<<1));/*ctc reset*/
-	RTC_SEC = Time.RTC_Sec;
-    RTC_MIN = Time.RTC_Min;
-    RTC_HOUR = Time.RTC_Hour;
-    RTC_DOM = Time.RTC_Mday;
-    RTC_DOW = Time.RTC_Wday;
-    RTC_DOY = Time.RTC_Yday;
-    RTC_MONTH = Time.RTC_Mon;
-    RTC_YEAR = Time.RTC_Year;
-    setregbits(RTC_CCR,(~(1<<1)),(0<<0));/*ctc reset*/
-    //setregbits(PCONP,(~(1 << 9)),0 << 9);  /* use battery to power the rtc*/
+	/*ctc reset*/
+	sil_wrw_mem((void *)RTC_CCR,sil_rew_mem((void *)RTC_CCR)|(1<<1));
+	/*RTC current time set*/
+	sil_wrw_mem((void *)RTC_SEC, Time.RTC_Sec);
+	sil_wrw_mem((void *)RTC_MIN, Time.RTC_Min);
+	sil_wrw_mem((void *)RTC_HOUR, Time.RTC_Hour);
+	sil_wrw_mem((void *)RTC_DOM, Time.RTC_Mday);
+	sil_wrw_mem((void *)RTC_DOW, Time.RTC_Wday);
+	sil_wrw_mem((void *)RTC_DOY, Time.RTC_Yday);
+	sil_wrw_mem((void *)RTC_MONTH, Time.RTC_Mon);
+	sil_wrw_mem((void *)RTC_YEAR, Time.RTC_Year);
+    /*ctc start*/
+    sil_wrw_mem((void *)RTC_CCR,sil_rew_mem((void *)RTC_CCR)&(~(1<<1)));
+
     return ERCD_OK;
 }
 
 ERCD RTC_SetAlarm(RTCTime Alarm)
 {
-    RTC_ALSEC = Alarm.RTC_Sec;
-    RTC_ALMIN = Alarm.RTC_Min;
-    RTC_ALHOUR = Alarm.RTC_Hour;
-    RTC_ALDOM = Alarm.RTC_Mday;
-    RTC_ALDOW = Alarm.RTC_Wday;
-    RTC_ALDOY = Alarm.RTC_Yday;
-    RTC_ALMON = Alarm.RTC_Mon;
-    RTC_ALYEAR = Alarm.RTC_Year; 
+	/*RTC alarm time set*/
+	sil_wrw_mem((void *)RTC_ALSEC, Alarm.RTC_Sec);
+	sil_wrw_mem((void *)RTC_ALMIN, Alarm.RTC_Min);
+	sil_wrw_mem((void *)RTC_ALHOUR, Alarm.RTC_Hour);
+	sil_wrw_mem((void *)RTC_ALDOM, Alarm.RTC_Mday);
+	sil_wrw_mem((void *)RTC_ALDOW, Alarm.RTC_Wday);
+	sil_wrw_mem((void *)RTC_ALDOY, Alarm.RTC_Yday);
+	sil_wrw_mem((void *)RTC_ALMON, Alarm.RTC_Mon);
+	sil_wrw_mem((void *)RTC_ALYEAR, Alarm.RTC_Year);
+
     return ERCD_OK;
 }
 
-RTCTime RTC_GetTime( void ) 
+RTCTime RTC_GetTime(void)
 {
     RTCTime LocalTime;
     uint32_t ctime0,ctime1,ctime2;
-    ctime0 = RTC_CTIME0;
-    ctime1 = RTC_CTIME1;
-    ctime2 = RTC_CTIME2;
+
+    ctime0 = sil_rew_mem((void *)RTC_CTIME0);
+    ctime1 = sil_rew_mem((void *)RTC_CTIME1);
+    ctime2 = sil_rew_mem((void *)RTC_CTIME2);
 //    LocalTime.RTC_Sec = ctime0&63;
 //    LocalTime.RTC_Min = (ctime0>>8)&63;
 //    LocalTime.RTC_Hour = (ctime0>>16)&23;
@@ -93,14 +98,15 @@ RTCTime RTC_GetTime( void )
 //    LocalTime.RTC_Yday = (ctime2>>0)&366;
 //    LocalTime.RTC_Mon = (ctime1>>8)&12;
 //    LocalTime.RTC_Year = (ctime1>>16)&4095;
-    LocalTime.RTC_Sec = RTC_SEC;
-    LocalTime.RTC_Min = RTC_MIN;
-    LocalTime.RTC_Hour = RTC_HOUR;
-    LocalTime.RTC_Mday = RTC_DOM;
-    LocalTime.RTC_Wday = RTC_DOW;
-    LocalTime.RTC_Yday = RTC_DOY;
-    LocalTime.RTC_Mon = RTC_MONTH;
-    LocalTime.RTC_Year = RTC_YEAR;
+    LocalTime.RTC_Sec = sil_rew_mem((void *)RTC_SEC);
+    LocalTime.RTC_Min = sil_rew_mem((void *)RTC_MIN);
+    LocalTime.RTC_Hour = sil_rew_mem((void *)RTC_HOUR);
+    LocalTime.RTC_Mday = sil_rew_mem((void *)RTC_DOM);
+    LocalTime.RTC_Wday = sil_rew_mem((void *)RTC_DOW);
+    LocalTime.RTC_Yday = sil_rew_mem((void *)RTC_DOY);
+    LocalTime.RTC_Mon = sil_rew_mem((void *)RTC_MONTH);
+    LocalTime.RTC_Year = sil_rew_mem((void *)RTC_YEAR);
+
     return (LocalTime);    
 }
 
