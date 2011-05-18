@@ -96,5 +96,5 @@ void EINT0_ISR()
 		IO2_INT_CLR = ext3_int_status;
 	}
 	/*Acknowledge Interrupt*/
-	sil_wrw_mem((void *)VICVectAddr, 0);
+	VICVectAddr = 0;
 }
