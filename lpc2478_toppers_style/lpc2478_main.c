@@ -45,9 +45,9 @@ int main()
     	//pwm_setpwm1duty(PWM_PORT_2,20);
     	//pwm_setpwm1duty(PWM_PORT_1,20);
     	//Buzzer(BUZZER_ON);
-    	//timer2_delayms(1);
-    	//Buzzer(BUZZER_OFF);
     	timer2_delayms(1000);
+    	//Buzzer(BUZZER_OFF);
+    	//timer2_delayms(1000);
     	current_time = RTC_GetTime();
     	UART_Printf("Time: %d-%d-%d\t%d:%d:%d\n",current_time.RTC_Year,current_time.RTC_Mon,current_time.RTC_Mday,current_time.RTC_Hour,current_time.RTC_Min,current_time.RTC_Sec);
 
