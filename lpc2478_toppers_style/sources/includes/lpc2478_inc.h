@@ -26,8 +26,8 @@
 #include  "target_rtc.h"
 #include  "target_timer.h"
 #include  "target_uart.h"
-
-extern volatile uint8_t gl_pCH452_key;
+#include  "target_i2c.h"
+#include  "target_i2c_cmd.h"
 
 #endif
 
