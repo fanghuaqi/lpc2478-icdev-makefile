@@ -10,7 +10,7 @@
 #include "lpc2478_inc.h"
 
 volatile uint8_t gl_pCH452_key = 0;
-void main(){
+int main(){
 
     PLL_Init();
     Buzzer_Init();
@@ -18,5 +18,5 @@ void main(){
     while(1){
     	Buzzer(BUZZER_ON);
     }
-    
+    return 0;
 }

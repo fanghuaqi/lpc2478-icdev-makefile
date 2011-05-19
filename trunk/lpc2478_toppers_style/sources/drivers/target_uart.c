@@ -11,7 +11,7 @@
 /**
  * file includes
  */
-#include "lpc2478_uart.h"
+#include "target_uart.h"
 
 /*
 **************************************************************************************************************
@@ -30,40 +30,53 @@ void  UART_Init(uint32_t baudrate)
 {
     uint32_t  Fdiv;
           
-	#if UART_PORT == 1
-		/* UART1 init */
-		PCONP |= 0x00000010; 					  /* Power on UART1    */
-		PCLKSEL0 &= 0xFFFFFCFF;                   /* Periphral clock init  */
-		PCLKSEL0 |= 0x00000100;                   /* UART1 clk = CCLK*/
-		PINSEL0 &= 0x3FFFFFFF;	                  /* P0.15 TXD1, P0.16 RXD1     */
-		PINSEL0 |= 0x40000000;
-		PINSEL1 &= 0xFFFFFFFC;
-		PINSEL1 |= 0x00000001;
-		PINMODE0 &= 0xFFFFFCFF;                    /*  UART receive pins should not have pull-down resistors enabled */
-		PINMODE0 |= 0x00000000;
-		PINMODE1 &= 0xFFFFFFFC;
-		PINMODE1 |= 0x00000000;
-		U1LCR    = 0x83;		                  /* 8 bits, no Parity, 1 Stop bit   DLAB =1       */
-		Fdiv     = ( Fp_uartclk / 16 ) / baudrate ;	  /*baud rate                                                   */
-		U1DLM    = (Fdiv >> 8) & 0xff;
-		U1DLL    = Fdiv & 0xff;
-		U1LCR    = 0x03;		                  /* DLAB = 0                                                   */
-		U1FCR    = 0x07;		                  /* Enable and reset TX and RX FIFO  */
-	#elif UART_PORT == 0
-		/* UART1 init */
-        PCONP |= 1<<3; 					  /* Power on UART0    */
-        PCLKSEL0 &= 0xFFFFFF3F;                   /* Periphral clock init  */
-        PCLKSEL0 |= 0x00000040;                   /* UART0 clk = CCLK*/
-        PINSEL0 &= 0xFFFFFF0F;	                  /* P0.2 TXD0, P0.3 RXD0     */
-        PINSEL0 |= 0x00000050;
-        PINMODE0 &= 0xFFFFFF0F;                    /*  UART receive pins should not have pull-down resistors enabled */
-        PINMODE0 |= 0x0000000;
-        U0LCR    = 0x83;		                  /* 8 bits, no Parity, 1 Stop bit   DLAB =1       */
-        Fdiv     = ( Fp_uartclk / 16 ) / baudrate ;	  /*baud rate                                                   */
-        U0DLM    = (Fdiv >> 8) & 0xff;
-        U0DLL    = Fdiv & 0xff;
-    	U0LCR    = 0x03;		                  /* DLAB = 0                                                   */
-        U0FCR    = 0x07;		                  /* Enable and reset TX and RX FIFO  */
+	#if UART_PORT == 1  /* UART1 init */
+		/* Power on UART1    */
+		sil_wrw_mem((void *)PCONP, sil_rew_mem((void *)PCONP) | 0x00000010);
+		/* Periphral clock init
+		 * UART1 clk = CCLK */
+		sil_wrw_mem((void *)PCLKSEL0, sil_rew_mem((void *)PCLKSEL0) & 0xFFFFFCFF);
+		sil_wrw_mem((void *)PCLKSEL0, sil_rew_mem((void *)PCLKSEL0) | 0x00000100);
+		/* P0.15 TXD1, P0.16 RXD1     */
+		sil_wrw_mem((void *)PINSEL0, sil_rew_mem((void *)PINSEL0) & 0x3FFFFFFF);
+		sil_wrw_mem((void *)PINSEL0, sil_rew_mem((void *)PINSEL0) | 0x40000000);
+		sil_wrw_mem((void *)PINSEL1, sil_rew_mem((void *)PINSEL1) & 0xFFFFFFFC);
+		sil_wrw_mem((void *)PINSEL1, sil_rew_mem((void *)PINSEL1) | 0x00000001);
+		/*  UART receive pins should not have pull-down resistors enabled */
+		sil_wrw_mem((void *)PINMODE0, sil_rew_mem((void *)PINMODE0) & 0xFFFFFCFF);
+		sil_wrw_mem((void *)PINMODE1, sil_rew_mem((void *)PINMODE1) & 0xFFFFFFFC);
+		/* 8 bits, no Parity, 1 Stop bit   DLAB =1 */
+		sil_wrw_mem((void *)U1LCR, 0x83);
+		/*baud rate set*/
+		Fdiv = (Fp_uartclk / 16) / baudrate ;
+		sil_wrw_mem((void *)U1DLM, (Fdiv >> 8) & 0xff);
+		sil_wrw_mem((void *)U1DLL, Fdiv & 0xff);
+		/* DLAB = 0*/
+		sil_wrw_mem((void *)U1LCR, 0x03);
+		/* Enable and reset TX and RX FIFO*/
+		sil_wrw_mem((void *)U1FCR, 0x07);
+	#elif UART_PORT == 0   /* UART2 init */
+		/* Power on UART0    */
+		sil_wrw_mem((void *)PCONP, sil_rew_mem((void *)PCONP)|(1<<3));
+		/* Periphral clock init
+		 * UART0 clk = CCLK*/
+		sil_wrw_mem((void *)PCLKSEL0, sil_rew_mem((void *)PCLKSEL0)&(0xFFFFFF3F));
+		sil_wrw_mem((void *)PCLKSEL0, sil_rew_mem((void *)PCLKSEL0)|(0x00000040));
+		/* P0.2 TXD0, P0.3 RXD0*/
+		sil_wrw_mem((void *)PINSEL0, sil_rew_mem((void *)PINSEL0)&(0xFFFFFF0F));
+		sil_wrw_mem((void *)PINSEL0, sil_rew_mem((void *)PINSEL0)|(0x00000050));
+		/*  UART receive pins should not have pull-down resistors enabled */
+		sil_wrw_mem((void *)PINMODE0, sil_rew_mem((void *)PINMODE0)&(0xFFFFFF0F));
+		/* 8 bits, no Parity, 1 Stop bit   DLAB =1 */
+		sil_wrw_mem((void *)U0LCR,0x83);
+		/* baud rate  set*/
+        Fdiv  = ( Fp_uartclk / 16 ) / baudrate ;
+        sil_wrw_mem((void *)U0DLM, (Fdiv >> 8) & 0xff);
+        sil_wrw_mem((void *)U0DLL, Fdiv & 0xff);
+		/* DLAB = 0  */
+        sil_wrw_mem((void *)U0LCR, 0x03);
+        /* Enable and reset TX and RX FIFO  */
+        sil_wrw_mem((void *)U0FCR, 0x07);
 	#endif
 }
 
@@ -83,11 +96,11 @@ void  UART_Init(uint32_t baudrate)
 void  UART_PrintChar (uint8_t ch)
 {
 	#if  UART_PORT == 1
-		while (!(U1LSR & 0x20));  /* wait until U1THR is empty.*/
-			U1THR  = ch;
+		while (!(sil_rew_mem((void *)U1LSR) & 0x20));  /* wait until U1THR is empty.*/
+		sil_wrw_mem((void *)U1THR, ch);
 	#elif UART_PORT == 0
-		while (!(U0LSR & 0x20));  /* wait until U1THR is empty.*/
-			U0THR  = ch;
+		while (!(sil_rew_mem((void *)U0LSR) & 0x20));  /* wait until U1THR is empty.*/
+		sil_wrw_mem((void *)U0THR, ch);
 	#endif
 
 }
@@ -133,12 +146,12 @@ void  UART_PrintStr (uint8_t *str)
 
 void  UART_Printf (uint8_t *format, ...)
 {
-    static uint8_t  buffer[40 + 1];
-            va_list     vArgs;
+    static char  buffer[40 + 1];
+    va_list     vArgs;
 
 
     va_start(vArgs, format);
-    vsprintf((int8_t *)buffer, (int8_t const *)format, vArgs);
+    vsprintf((char *)buffer, (const char *)format, vArgs);
     va_end(vArgs);
     UART_PrintStr((uint8_t*) buffer);
 }

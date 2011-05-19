@@ -15,8 +15,8 @@
  * @0.1 Byfanghuaqi  Sat May 14 21:06:40 2011 Create orignal file
  * ======================================================================================
  */
-#ifndef  LPC2478_TIMER_H
-#define  LPC2478_TIMER_H
+#ifndef  TARGET_TIMER_H
+#define  TARGET_TIMER_H
 
 
 #include  "lpc2478_inc.h"

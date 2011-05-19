@@ -9,9 +9,8 @@
  */
 
 
-#ifndef LPC2478_UART_H
-#define LPC2478_UART_H
-
+#ifndef TARGET_UART_H
+#define TARGET_UART_H
 
 
 #include <stdarg.h>
