@@ -14,12 +14,13 @@ int main(){
 
     PLL_Init();
     Buzzer_Init();
+    timer2_capinit();
 
     while(1){
     	Buzzer(BUZZER_ON);
-    	timer2_delayms(1);
+    	Delay_ms(1);
     	Buzzer(BUZZER_OFF);
-    	timer2_delayms(1);
+    	Delay_ms(1);
     }
     return 0;
 }
