@@ -59,7 +59,7 @@ void timer2_delayms(uint32_t ms)
 		 * if timer2 clock is not 72Mhz please change the formula(公式) below*/
 		cnt_to_delay = ms * 1000/ 72;
 		/*wait the counter passed the set counts*/
-		while(cnt_passed > cnt_to_delay){
+		while(cnt_passed < cnt_to_delay){
 			cnt_passed = sil_rew_mem((void *)T2TC) - start_dly_cnt;
 		}
 	}else{/*if timer2 not enabled print error*/
