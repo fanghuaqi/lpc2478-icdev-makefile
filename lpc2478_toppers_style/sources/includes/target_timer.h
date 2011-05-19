@@ -23,4 +23,5 @@
 
 void timer2_capinit(void);
 uint32_t read_timer2cap(void);
+void timer2_delayms(uint32_t ms);
 #endif

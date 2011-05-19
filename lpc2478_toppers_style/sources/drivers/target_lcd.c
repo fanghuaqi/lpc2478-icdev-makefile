@@ -8,7 +8,7 @@
  * 
  */
 
-#include "lpc2478_lcd.h"
+#include "target_lcd.h"
 
 
 

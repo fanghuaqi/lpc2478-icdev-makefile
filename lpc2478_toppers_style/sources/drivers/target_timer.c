@@ -46,3 +46,23 @@ uint32_t read_timer2cap(void)
 {
     return (sil_rew_mem((void *)T2CR0));
 }
+void timer2_delayms(uint32_t ms)
+{
+	volatile uint32_t start_dly_cnt = 0;
+	volatile uint32_t cnt_to_delay = 0;
+	volatile uint32_t cnt_passed = 0;
+
+	if (sil_rew_mem((void *)T2TCR) & 0x01){  /*check if timer2 counter enabled*/
+		/*get current count of Timer2*/
+		start_dly_cnt = sil_rew_mem((void *)T2TC);
+		/*calculate timer2 count to delay and known that timer2 CLK=72Mhz
+		 * if timer2 clock is not 72Mhz please change the formula(公式) below*/
+		cnt_to_delay = ms * 1000/ 72;
+		/*wait the counter passed the set counts*/
+		while(cnt_passed > cnt_to_delay){
+			cnt_passed = sil_rew_mem((void *)T2TC) - start_dly_cnt;
+		}
+	}else{/*if timer2 not enabled print error*/
+		PRINT_Log("Timer2 not started for delay!");
+	}
+}
