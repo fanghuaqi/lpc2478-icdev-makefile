@@ -8,7 +8,7 @@
  * 
  */
 
-#include  "lpc2478_i2c.h"
+#include  "target_i2c.h"
 
 volatile uint8_t gl_CH452_key  = 0xff;
 
