@@ -7,8 +7,8 @@
  *
  *
  */
-#ifndef __LPC2478_I2C_H
-#define __LPC2478_I2C_H
+#ifndef TARGET_I2C_H
+#define TARGET_I2C_H
 
 #include "lpc2478_inc.h"
 
@@ -97,34 +97,26 @@
 
 extern volatile uint8_t gl_CH452_key ;
 
-#define I2C_CLEAR_STAT(i2c_baseAddr,I2C_STAT)     setreg(((i2c_baseAddr) + I2CONCLR_OFFSET),(I2C_STAT))
-#define I2C_SEND(i2c_baseAddr,I2C_DAT)            setreg(((i2c_baseAddr) + I2DAT_OFFSET),(I2C_DAT))
-#define I2C_READ(i2c_baseAddr)                    getreg(((i2c_baseAddr) + I2DAT_OFFSET))
-#define I2C_ACK(i2c_baseAddr, status)             while(getreg((i2c_baseAddr + I2STAT_OFFSET)) != (status))
+
+
+void 		I2C_AddrBit_Init(void);
 ERCD 	  	I2C_Init(uint8_t I2cChannel, uint16_t I2cMode, uint16_t I2cClk, uint8_t I2cAddress);
-uint8_t 	I2C_Master_ReadByte(uint8_t I2cChannel,  uint8_t SlaveAddr);
-ERCD 		I2C_Master_WriteByte(uint8_t I2cChannel,  uint8_t SlaveAddr, uint8_t I2cData);
+ERCD 		I2C_Master_ReadBuf(uint8_t i2cChannel, uint8_t slaveAddr, uint8_t *rec_buffer, uint16_t buffer_len);
+ERCD 		I2C_Master_WriteBuf(uint8_t i2cChannel,  uint8_t slaveAddr, uint8_t *send_buffer, uint16_t buffer_len);
+uint8_t 	I2C_Master_ReadByte(uint8_t i2cChannel, uint8_t slaveAddr);
+ERCD 		I2C_Master_WriteByte(uint8_t i2cChannel,  uint8_t slaveAddr, uint8_t i2cData);
+
+ERCD 		CH452_Init(void);
 ERCD        CH452_LED_OPEN(uint16_t led_mask, uint8_t colorType);
 ERCD        CH452_LED_OPEN_SEL(uint8_t led_num, uint8_t colorType);
-ERCD 		CH452_Init(void);
 ERCD 		CH452_KeyPress_Signal(void);
 ERCD 		CH452_Set_SegValue(uint8_t *seg_value);
 ERCD 		CH452_Get_SegValue(uint8_t *seg_value);
+
 ERCD        EEPROM_Init(uint8_t i2c_channel,uint16_t clock);
 uint8_t     EEPROM_ReadByte(uint8_t i2c_channel, uint32_t addr);
 ERCD        EEPROM_WriteByte(uint8_t i2c_channel, uint32_t addr, uint8_t data);
-uint32_t I2C_BASE_SEL(uint8_t i2c_channel);
-ERCD I2C_START(uint32_t i2c_baseAddr);
-//ERCD I2C_ACK(uint32_t i2c_baseAddr,uint8_t status);
-ERCD I2C_STOP(uint32_t i2c_baseAddr);
-ERCD I2C_StartTransmission(uint32_t i2c_baseAddr);
-ERCD I2C_SendAddr(uint32_t i2c_baseAddr,uint8_t slaveAddr,uint8_t operation);
-ERCD I2C_SendByte(uint32_t i2c_baseAddr, uint8_t i2c_data);
-uint8_t I2C_ReceiveByte(uint32_t i2c_baseAddr, uint8_t ack_bit);
-ERCD I2C_StopTransmission(uint32_t i2c_baseAddr);
-void I2CInit(unsigned int fi2c);
-unsigned char I2CWriteByte(unsigned char sla, unsigned char data,unsigned char address);
-unsigned char I2CReadByte(unsigned char sla, unsigned char address);
+
 #define	CH452_CLOSE_ALLLEDS()	I2C_Master_WriteByte(I2C_CHL0, I2C0_ADDR|(CH452_LEVEL>>7), 0)
 
 #endif
