@@ -17,6 +17,9 @@ int main(){
 
     while(1){
     	Buzzer(BUZZER_ON);
+    	timer2_delayms(1);
+    	Buzzer(BUZZER_OFF);
+    	timer2_delayms(1);
     }
     return 0;
 }
