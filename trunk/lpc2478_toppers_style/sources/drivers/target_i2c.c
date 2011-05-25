@@ -58,12 +58,12 @@ Inline void I2C_STOP(uint32_t i2c_baseAddr)
 
 void I2C_AddrBit_Init(void)
 {
-	/*P2.0 work as address bit select GPIO with pull-up resistor*/
+	/*P2.23 work as address bit select GPIO with pull-up resistor*/
 	sil_wrw_mem((void *)PINSEL5,sil_rew_mem((void *)PINSEL5) & (~(0x3<<14)));
 	sil_wrw_mem((void *)PINMODE5,sil_rew_mem((void *)PINMODE5) & (~(0x3<<14)));
-	/*P2.0 set as output and set high output*/
+	/*P2.23 set as output and set high output*/
 	sil_wrw_mem((void *)FIO2DIR2,sil_rew_mem((void *)FIO2DIR2) | ((0x1<<7)&0xff));
-	sil_wrw_mem((void *)FIO2SET2,sil_rew_mem((void *)FIO2DIR2) | ((0x1<<7)&0xff));
+	sil_wrw_mem((void *)FIO2SET2,sil_rew_mem((void *)FIO2SET2) | ((0x1<<7)&0xff));
 }
 
 /** 
@@ -259,13 +259,15 @@ ERCD I2C_Master_WriteByte(uint8_t i2cChannel,  uint8_t slaveAddr, uint8_t i2cDat
 }
 
 
-ERCD CH452_Init(void)
+ERCD CH452_Init(uint16_t i2cClk)
 {
-	I2C_Master_WriteByte(I2C_CHL0, CH452_ACK_CMD, CH452_ACK_DATA); 				/*选择CH452的2线接口ACK。这个必须最先发出去*/
-    I2C_Master_WriteByte(I2C_CHL0, CH452_SYSON2_CMD, CH452_SYSON2_DATA);		/*打开键盘，显示驱动*/
-    I2C_Master_WriteByte(I2C_CHL0, CH452_NO_BCD_CMD, 0x40); 					/*设置非BCD译码,扫描极限为4,显示驱动占空比为100%*/
-    I2C_Master_WriteByte(I2C_CHL0, CH452_TWINKLE_CMD, 0x00); 					/*设置不闪烁*/
-    I2C_Master_WriteByte(I2C_CHL0,CH452_LEVEL_CMD,CH452_LEVEL_DATA|0x09);
+	I2C_AddrBit_Init();
+	I2C_Init(CH452_CHL,I2CMASTER,i2cClk,CH452_ADDR);
+	I2C_Master_WriteByte(CH452_CHL,CH452_ACK_CMD, CH452_ACK_DATA); 				/*选择CH452的2线接口ACK。这个必须最先发出去*/
+    I2C_Master_WriteByte(CH452_CHL,CH452_SYSON2_CMD, CH452_SYSON2_DATA);		/*打开键盘，显示驱动*/
+    I2C_Master_WriteByte(CH452_CHL,CH452_NO_BCD_CMD, 0x40); 					/*设置非BCD译码,扫描极限为4,显示驱动占空比为100%*/
+    I2C_Master_WriteByte(CH452_CHL,CH452_TWINKLE_CMD, 0x00); 					/*设置不闪烁*/
+    I2C_Master_WriteByte(CH452_CHL,CH452_LEVEL_CMD,CH452_LEVEL_DATA|0x09);
     CH452_LED_OPEN_SEL(3,1);
     CH452_LED_OPEN(0x7fff,LED_YELLOW);													/*关闭所有CH452上的LED*/
     return ERCD_OK;
@@ -291,10 +293,10 @@ ERCD  CH452_LED_OPEN(uint16_t led_mask, uint8_t colorType)
     led_maskH = (uint8_t)(led_mask>>8) & 0x7f;
 
     /*Read the seg value of every DIG 0 - 3*/
-    seg_value[0] = I2C_Master_ReadByte(I2C_CHL0, CH452_DIG0_CMD) & (~led_maskL);
-    seg_value[1] = I2C_Master_ReadByte(I2C_CHL0, CH452_DIG1_CMD) & (~led_maskL);
-    seg_value[2] = I2C_Master_ReadByte(I2C_CHL0, CH452_DIG2_CMD) & (~led_maskH) & 0xef;
-    seg_value[3] = I2C_Master_ReadByte(I2C_CHL0, CH452_DIG3_CMD) & (~led_maskH) & 0xef;
+    seg_value[0] = I2C_Master_ReadByte(CH452_CHL, CH452_DIG0_CMD) & (~led_maskL);
+    seg_value[1] = I2C_Master_ReadByte(CH452_CHL, CH452_DIG1_CMD) & (~led_maskL);
+    seg_value[2] = I2C_Master_ReadByte(CH452_CHL, CH452_DIG2_CMD) & (~led_maskH) & 0xef;
+    seg_value[3] = I2C_Master_ReadByte(CH452_CHL, CH452_DIG3_CMD) & (~led_maskH) & 0xef;
                                        
     switch (colorType){
         case LED_OFF:
@@ -317,10 +319,10 @@ ERCD  CH452_LED_OPEN(uint16_t led_mask, uint8_t colorType)
             return ERCD_ARG_ERR;
             break;
     }
-    I2C_Master_WriteByte(I2C_CHL0, CH452_DIG0_CMD, seg_value[0]|CH452_DIG0_DATA);
-    I2C_Master_WriteByte(I2C_CHL0, CH452_DIG1_CMD, seg_value[1]|CH452_DIG1_DATA);
-    I2C_Master_WriteByte(I2C_CHL0, CH452_DIG2_CMD, seg_value[2]|CH452_DIG2_DATA);
-    I2C_Master_WriteByte(I2C_CHL0, CH452_DIG3_CMD, seg_value[3]|CH452_DIG3_DATA);
+    I2C_Master_WriteByte(CH452_CHL, CH452_DIG0_CMD, seg_value[0]|CH452_DIG0_DATA);
+    I2C_Master_WriteByte(CH452_CHL, CH452_DIG1_CMD, seg_value[1]|CH452_DIG1_DATA);
+    I2C_Master_WriteByte(CH452_CHL, CH452_DIG2_CMD, seg_value[2]|CH452_DIG2_DATA);
+    I2C_Master_WriteByte(CH452_CHL, CH452_DIG3_CMD, seg_value[3]|CH452_DIG3_DATA);
 
     return ERCD_OK;
 }
@@ -339,17 +341,17 @@ ERCD  CH452_LED_OPEN_SEL(uint8_t led_num, uint8_t colorType)
     }
 
     if (colorType == LED_OFF){
-    	I2C_Master_WriteByte(I2C_CHL0, CH452_CLR_BIT_CMD,(led_num|CH452_CLR_BIT_DATA));
-    	I2C_Master_WriteByte(I2C_CHL0, CH452_CLR_BIT_CMD,(led_num|CH452_CLR_BIT_DATA|0x08));
+    	I2C_Master_WriteByte(CH452_CHL, CH452_CLR_BIT_CMD,(led_num|CH452_CLR_BIT_DATA));
+    	I2C_Master_WriteByte(CH452_CHL, CH452_CLR_BIT_CMD,(led_num|CH452_CLR_BIT_DATA|0x08));
     }else if (colorType == LED_RED){
-    	I2C_Master_WriteByte(I2C_CHL0, CH452_SET_BIT_CMD,(led_num|CH452_SET_BIT_DATA));
-		I2C_Master_WriteByte(I2C_CHL0, CH452_CLR_BIT_CMD,(led_num|CH452_CLR_BIT_DATA|0x08));
+    	I2C_Master_WriteByte(CH452_CHL, CH452_SET_BIT_CMD,(led_num|CH452_SET_BIT_DATA));
+		I2C_Master_WriteByte(CH452_CHL, CH452_CLR_BIT_CMD,(led_num|CH452_CLR_BIT_DATA|0x08));
     }else if (colorType == LED_GREEN){
-    	I2C_Master_WriteByte(I2C_CHL0, CH452_CLR_BIT_CMD,(led_num|CH452_CLR_BIT_DATA));
-		I2C_Master_WriteByte(I2C_CHL0, CH452_SET_BIT_CMD,(led_num|CH452_SET_BIT_DATA|0x08));
+    	I2C_Master_WriteByte(CH452_CHL, CH452_CLR_BIT_CMD,(led_num|CH452_CLR_BIT_DATA));
+		I2C_Master_WriteByte(CH452_CHL, CH452_SET_BIT_CMD,(led_num|CH452_SET_BIT_DATA|0x08));
     }else if (colorType == LED_YELLOW){
-    	I2C_Master_WriteByte(I2C_CHL0, CH452_SET_BIT_CMD,(led_num|CH452_SET_BIT_DATA));
-		I2C_Master_WriteByte(I2C_CHL0, CH452_SET_BIT_CMD,(led_num|CH452_SET_BIT_DATA|0x08));
+    	I2C_Master_WriteByte(CH452_CHL, CH452_SET_BIT_CMD,(led_num|CH452_SET_BIT_DATA));
+		I2C_Master_WriteByte(CH452_CHL, CH452_SET_BIT_CMD,(led_num|CH452_SET_BIT_DATA|0x08));
     }
 
     return ERCD_OK;
@@ -358,18 +360,18 @@ ERCD  CH452_LED_OPEN_SEL(uint8_t led_num, uint8_t colorType)
 
 ERCD CH452_Get_SegValue(uint8_t *seg_value)
 {
-	seg_value[0] = I2C_Master_ReadByte(I2C_CHL0, CH452_DIG0_CMD);
-	seg_value[1] = I2C_Master_ReadByte(I2C_CHL0, CH452_DIG1_CMD);
-	seg_value[2] = I2C_Master_ReadByte(I2C_CHL0, CH452_DIG2_CMD);
-	seg_value[3] = I2C_Master_ReadByte(I2C_CHL0, CH452_DIG3_CMD);
+	seg_value[0] = I2C_Master_ReadByte(CH452_CHL, CH452_DIG0_CMD);
+	seg_value[1] = I2C_Master_ReadByte(CH452_CHL, CH452_DIG1_CMD);
+	seg_value[2] = I2C_Master_ReadByte(CH452_CHL, CH452_DIG2_CMD);
+	seg_value[3] = I2C_Master_ReadByte(CH452_CHL, CH452_DIG3_CMD);
 	return ERCD_OK;
 }
 ERCD CH452_Set_SegValue(uint8_t *seg_value)
 {
-    I2C_Master_WriteByte(I2C_CHL0, CH452_DIG0_CMD, seg_value[0]|CH452_DIG0_DATA);
-    I2C_Master_WriteByte(I2C_CHL0, CH452_DIG1_CMD, seg_value[1]|CH452_DIG1_DATA);
-    I2C_Master_WriteByte(I2C_CHL0, CH452_DIG2_CMD, seg_value[2]|CH452_DIG2_DATA);
-    I2C_Master_WriteByte(I2C_CHL0, CH452_DIG3_CMD, seg_value[3]|CH452_DIG3_DATA);
+    I2C_Master_WriteByte(CH452_CHL, CH452_DIG0_CMD, seg_value[0]|CH452_DIG0_DATA);
+    I2C_Master_WriteByte(CH452_CHL, CH452_DIG1_CMD, seg_value[1]|CH452_DIG1_DATA);
+    I2C_Master_WriteByte(CH452_CHL, CH452_DIG2_CMD, seg_value[2]|CH452_DIG2_DATA);
+    I2C_Master_WriteByte(CH452_CHL, CH452_DIG3_CMD, seg_value[3]|CH452_DIG3_DATA);
 	return ERCD_OK;
 }
 /** 
@@ -385,7 +387,7 @@ ERCD CH452_KeyPress_Signal(void)
 
 	CH452_Get_SegValue(&seg_value[0]);
 	for (cnt = 0; cnt < 32; cnt ++){
-		I2C_Master_WriteByte(I2C_CHL0, CH452_LEVEL_CMD, cnt|CH452_LEVEL_DATA);
+		I2C_Master_WriteByte(CH452_CHL, CH452_LEVEL_CMD, cnt|CH452_LEVEL_DATA);
 		Delay_ms(25);
 	}
 	CH452_Set_SegValue(&seg_value[0]);

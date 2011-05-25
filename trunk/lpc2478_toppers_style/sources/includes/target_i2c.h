@@ -18,15 +18,18 @@
 #define	I2C_CHL0	0
 #define I2C_CHL1 	1
 #define I2C_CHL2 	2
+#define CH452_CHL   I2C_CHL0
 /*channel clk definitions*/
 #define	I2C0_CLK	4000
 #define I2C1_CLK 	4000
 #define I2C2_CLK 	4000
+#define CH452_CLK   4000
 /*channel addr definitions*/
 #define	I2C0_ADDR	0x60   							/*由于CH452的ADDR引脚被强制拉高，所以addr配置为60h*/
 #define I2C1_ADDR 	0x31
 #define I2C2_ADDR 	0x82
 #define EEPROM_ADDR 0xA0
+#define CH452_ADDR  I2C0_ADDR
 /* EEPROM W/R Operation  */
 #define EEPROM_WRITE 0
 #define EEPROM_READ  1
@@ -106,7 +109,7 @@ ERCD 		I2C_Master_WriteBuf(uint8_t i2cChannel,  uint8_t slaveAddr, uint8_t *send
 uint8_t 	I2C_Master_ReadByte(uint8_t i2cChannel, uint8_t slaveAddr);
 ERCD 		I2C_Master_WriteByte(uint8_t i2cChannel,  uint8_t slaveAddr, uint8_t i2cData);
 
-ERCD 		CH452_Init(void);
+ERCD        CH452_Init(uint16_t i2cClk);
 ERCD        CH452_LED_OPEN(uint16_t led_mask, uint8_t colorType);
 ERCD        CH452_LED_OPEN_SEL(uint8_t led_num, uint8_t colorType);
 ERCD 		CH452_KeyPress_Signal(void);
