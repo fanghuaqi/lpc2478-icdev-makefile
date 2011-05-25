@@ -12,31 +12,31 @@
 int main()
 {
 	RTCTime local_time, alarm_time, current_time;
-	uint16_t i = 0, j = 0;
+	uint16_t i = 0, j = 1;
 
     /*pll init*/
 	PLL_Init();
     Buzzer_Init();
     UART_Init(115200);
     RTC_Init();
-    pwm_init(PWM_CHANNEL_1,1000);
+    //pwm_init(PWM_CHANNEL_1,1000);
     timer2_capinit();
     EEPROM_Init(I2C_CHL1,EEPROM_CLK);
 	local_time.RTC_Sec = 00;
-	local_time.RTC_Min = 51;
-	local_time.RTC_Hour = 19;
-	local_time.RTC_Mday = 19;
-	local_time.RTC_Wday = 4;
-	local_time.RTC_Yday = 139;		/* current date 05/10/2011 */
+	local_time.RTC_Min = 33;
+	local_time.RTC_Hour = 11;
+	local_time.RTC_Mday = 25;
+	local_time.RTC_Wday = 3;
+	local_time.RTC_Yday = 145;		/* current date 05/10/2011 */
 	local_time.RTC_Mon = 5;
 	local_time.RTC_Year = 2011;
 	//RTC_SetTime( local_time );		/* Set local time */
 	alarm_time.RTC_Sec = 0;
-	alarm_time.RTC_Min = 52;
-	alarm_time.RTC_Hour = 19;
-	alarm_time.RTC_Mday = 19;
-	alarm_time.RTC_Wday = 4;
-	alarm_time.RTC_Yday = 139;		/* alarm date 05/10/2011 */
+	alarm_time.RTC_Min = 34;
+	alarm_time.RTC_Hour = 11;
+	alarm_time.RTC_Mday = 25;
+	alarm_time.RTC_Wday = 3;
+	alarm_time.RTC_Yday = 145;		/* alarm date 05/10/2011 */
 	alarm_time.RTC_Mon = 5;
 	alarm_time.RTC_Year = 2011;
 	RTC_SetAlarm(alarm_time);
@@ -44,22 +44,24 @@ int main()
     while(1){
     	current_time = RTC_GetTime();
     	UART_Printf("Time: %d-%d-%d\t%d:%d:%d\n",current_time.RTC_Year,current_time.RTC_Mon,current_time.RTC_Mday,current_time.RTC_Hour,current_time.RTC_Min,current_time.RTC_Sec);
-    	for (i=0x0;i<0x800;i++){
+    	for (i=0x0;i<0x80;i++){
     		EEPROM_WriteByte(I2C_CHL1,i,(uint8_t)(i*j));
     	}
     	current_time = RTC_GetTime();
     	UART_Printf("Time: %d-%d-%d\t%d:%d:%d\n",current_time.RTC_Year,current_time.RTC_Mon,current_time.RTC_Mday,current_time.RTC_Hour,current_time.RTC_Min,current_time.RTC_Sec);
-    	for (i=0x0;i<0x800;i++){
+    	for (i=0x0;i<0x80;i++){
     		UART_Printf("%d:%d\n",i,EEPROM_ReadByte(I2C_CHL1,i));
-    		timer2_delayms(50);
+    		timer2_delayms(10);
     	}
+    	current_time = RTC_GetTime();
+    	UART_Printf("Time: %d-%d-%d\t%d:%d:%d\n",current_time.RTC_Year,current_time.RTC_Mon,current_time.RTC_Mday,current_time.RTC_Hour,current_time.RTC_Min,current_time.RTC_Sec);
     	j = (j>15)?0:j;
     	j++;
     	//pwm_setpwm1duty(PWM_PORT_2,20);
     	//pwm_setpwm1duty(PWM_PORT_1,20);
-    	//Buzzer(BUZZER_ON);
+    	Buzzer(BUZZER_ON);
     	timer2_delayms(2000);
-    	//Buzzer(BUZZER_OFF);
+    	Buzzer(BUZZER_OFF);
     	//timer2_delayms(1000);
     	PRINT_Log("Hello World!\n");
     }
