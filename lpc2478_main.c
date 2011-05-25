@@ -19,14 +19,14 @@ void main(){
 	RTCTime local_time, alarm_time, current_time;
     PLL_Init();
     PINSEL10 = 0x00;   //ETM interface is disabled. must set this
-    UART_Init(115200);
+    //UART_Init(115200);
 
     //EINT0_Init(FALLING_EDGE,HIGHEST_PRIORITY);
-    UART_Printf("Hello World!\n");
+    //UART_Printf("Hello World!\n");
     //EEPROM_Init(I2C_CHL1,EEPROM_CLK);
     //Buzzer_Init();
-    pwm_init(PWM_CHANNEL_1,1000);
-    pwm_setpwm1duty(PWM_PORT_2,20);
+    //pwm_init(PWM_CHANNEL_1,1000);
+    //pwm_setpwm1duty(PWM_PORT_2,20);
     //timer2_capinit();
     //RTC_Init();
 
@@ -105,7 +105,7 @@ void main(){
     		row = (temp >> 3)&0x07;
     	}
     	if (pressed){   										/*Key Pressed*/
-			UART_Printf("\nR %d C %d P \n",(temp >> 3)&0x07,temp&0x07);
+			//UART_Printf("\nR %d C %d P \n",(temp >> 3)&0x07,temp&0x07);
 			Delay_ms(10);
 			CH452_KeyPress_Signal();
 			gl_CH452_key = gl_CH452_key & 0x3f;
