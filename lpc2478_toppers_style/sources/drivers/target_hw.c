@@ -29,17 +29,17 @@ void Buzzer_Init(void)
 	sil_wrw_mem((void *)SCS,sil_rew_mem((void *)SCS)|0x00000001);                /*set GPIOx to use Fast I/O */
 	sil_wrw_mem((void *)PINSEL10,0);                                             /*ETM interface is disabled. must set this*/
 
-	sil_wrw_mem((void *)PINSEL4,sil_rew_mem((void *)PINSEL4) & (~(0x3<<0)) );    /*set GPIOx to use Fast I/O */
-	sil_wrw_mem((void *)PINMODE4,sil_rew_mem((void *)PINMODE4) & (~(0x3<<0)) );  /*p2.0 pull up*/
-	sil_wrw_mem((void *)FIO2DIR0,sil_rew_mem((void *)FIO2DIR0) | (0x1<<0) );     /*p2.0 output*/
+	sil_wrw_mem((void *)PINSEL4,sil_rew_mem((void *)PINSEL4) & (~(0x3<<2)) );    /*set GPIOx to use Fast I/O */
+	sil_wrw_mem((void *)PINMODE4,sil_rew_mem((void *)PINMODE4) & (~(0x3<<2)) );  /*p2.0 pull up*/
+	sil_wrw_mem((void *)FIO2DIR0,sil_rew_mem((void *)FIO2DIR0) | (0x1<<1) );     /*p2.0 output*/
 }
 
 void Buzzer(uint8_t buzzer)
 {
 	if (buzzer == BUZZER_ON){
-		sil_wrw_mem((void *)FIO2SET0,sil_rew_mem((void *)FIO2SET0) | (0x1<<0) ); /*p2.0 high*/
+		sil_wrw_mem((void *)FIO2SET0,sil_rew_mem((void *)FIO2SET0) | (0x1<<1) ); /*p2.0 high*/
 	}else {
-		sil_wrw_mem((void *)FIO2CLR0,sil_rew_mem((void *)FIO2CLR0) | (0x1<<0) ); /*p2.0 low*/
+		sil_wrw_mem((void *)FIO2CLR0,sil_rew_mem((void *)FIO2CLR0) | (0x1<<1) ); /*p2.0 low*/
 	}
 }
 
