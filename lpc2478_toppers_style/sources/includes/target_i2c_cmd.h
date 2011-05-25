@@ -46,34 +46,34 @@
 #define CH452_ACK       0x0700		            // 2线接口ACK
 
 /* CH451和CH452的常用命令码+地址*/
-#define CH452_NOP_CMD		(I2C0_ADDR|((CH452_NOP_CMD&0x0f00)>>7))					// 空操作
-#define CH452_RESET_CMD    	(I2C0_ADDR|((CH452_RESET&0x0f00)>>7))					// 复位
-#define CH452_LEVEL_CMD		(I2C0_ADDR|((CH452_LEVEL&0x0f00)>>7))					// 加载光柱值,需另加7位数据
-#define CH452_CLR_BIT_CMD	(I2C0_ADDR|((CH452_CLR_BIT&0x0f00)>>7))					// 段位清0,需另加6位数据
-#define CH452_SET_BIT_CMD	(I2C0_ADDR|((CH452_SET_BIT&0x0f00)>>7))					// 段位置1,需另加6位数据
-#define CH452_SLEEP_CMD		(I2C0_ADDR|((CH452_SLEEP&0x0f00)>>7))						// 进入睡眠状态
-#define CH452_LEFTMOV_CMD   (I2C0_ADDR|((CH452_RIGHTCYC&0x0f00)>>7))			            // 设置移动方式-左移
-#define CH452_LEFTCYC_CMD   (I2C0_ADDR|((CH452_LEFTCYC&0x0f00)>>7))			            // 设置移动方式-左循环
-#define CH452_RIGHTMOV_CMD  (I2C0_ADDR|((CH452_RIGHTMOV&0x0f00)>>7))			            // 设置移动方式-右移
-#define CH452_RIGHTCYC_CMD  (I2C0_ADDR|((CH452_RIGHTCYC&0x0f00)>>7))			            // 设置移动方式-右循环
-#define CH452_SELF_BCD_CMD	(I2C0_ADDR|((CH452_SELF_BCD&0x0f00)>>7))						// 自定义BCD码,需另加7位数据
-#define CH452_SYSOFF_CMD    (I2C0_ADDR|((CH452_SYSOFF&0x0f00)>>7))						// 关闭显示、关闭键盘
-#define CH452_SYSON1_CMD    (I2C0_ADDR|((CH452_SYSON1&0x0f00)>>7))						// 开启显示
-#define CH452_SYSON2_CMD    (I2C0_ADDR|((CH452_SYSON1&0x0f00)>>7))						// 开启显示、键盘
-#define CH452_SYSON2W_CMD   (I2C0_ADDR|((CH452_SYSON2W&0x0f00)>>7))						// 开启显示、键盘, 真正2线接口
-#define CH452_NO_BCD_CMD    (I2C0_ADDR|((CH452_NO_BCD&0x0f00)>>7))						// 设置默认显示方式,可另加3位扫描极限
-#define CH452_BCD_CMD       (I2C0_ADDR|((CH452_BCD&0x0f00)>>7))						// 设置BCD译码方式,可另加3位扫描极限
-#define CH452_TWINKLE_CMD   (I2C0_ADDR|((CH452_TWINKLE&0x0f00)>>7))			            // 设置闪烁控制,需另加8位数据
-#define CH452_GET_KEY_CMD	(I2C0_ADDR|((CH452_GET_KEY&0x0f00)>>7))						// 获取按键,返回按键代码
-#define CH452_DIG0_CMD      (I2C0_ADDR|((CH452_DIG0&0x0f00)>>7))						// 数码管位0显示,需另加8位数据
-#define CH452_DIG1_CMD      (I2C0_ADDR|((CH452_DIG1&0x0f00)>>7))			            // 数码管位1显示,需另加8位数据
-#define CH452_DIG2_CMD      (I2C0_ADDR|((CH452_DIG2&0x0f00)>>7))			            // 数码管位2显示,需另加8位数据
+#define CH452_NOP_CMD		(CH452_ADDR|((CH452_NOP_CMD&0x0f00)>>7))					// 空操作
+#define CH452_RESET_CMD    	(CH452_ADDR|((CH452_RESET&0x0f00)>>7))					// 复位
+#define CH452_LEVEL_CMD		(CH452_ADDR|((CH452_LEVEL&0x0f00)>>7))					// 加载光柱值,需另加7位数据
+#define CH452_CLR_BIT_CMD	(CH452_ADDR|((CH452_CLR_BIT&0x0f00)>>7))					// 段位清0,需另加6位数据
+#define CH452_SET_BIT_CMD	(CH452_ADDR|((CH452_SET_BIT&0x0f00)>>7))					// 段位置1,需另加6位数据
+#define CH452_SLEEP_CMD		(CH452_ADDR|((CH452_SLEEP&0x0f00)>>7))						// 进入睡眠状态
+#define CH452_LEFTMOV_CMD   (CH452_ADDR|((CH452_RIGHTCYC&0x0f00)>>7))			            // 设置移动方式-左移
+#define CH452_LEFTCYC_CMD   (CH452_ADDR|((CH452_LEFTCYC&0x0f00)>>7))			            // 设置移动方式-左循环
+#define CH452_RIGHTMOV_CMD  (CH452_ADDR|((CH452_RIGHTMOV&0x0f00)>>7))			            // 设置移动方式-右移
+#define CH452_RIGHTCYC_CMD  (CH452_ADDR|((CH452_RIGHTCYC&0x0f00)>>7))			            // 设置移动方式-右循环
+#define CH452_SELF_BCD_CMD	(CH452_ADDR|((CH452_SELF_BCD&0x0f00)>>7))						// 自定义BCD码,需另加7位数据
+#define CH452_SYSOFF_CMD    (CH452_ADDR|((CH452_SYSOFF&0x0f00)>>7))						// 关闭显示、关闭键盘
+#define CH452_SYSON1_CMD    (CH452_ADDR|((CH452_SYSON1&0x0f00)>>7))						// 开启显示
+#define CH452_SYSON2_CMD    (CH452_ADDR|((CH452_SYSON1&0x0f00)>>7))						// 开启显示、键盘
+#define CH452_SYSON2W_CMD   (CH452_ADDR|((CH452_SYSON2W&0x0f00)>>7))						// 开启显示、键盘, 真正2线接口
+#define CH452_NO_BCD_CMD    (CH452_ADDR|((CH452_NO_BCD&0x0f00)>>7))						// 设置默认显示方式,可另加3位扫描极限
+#define CH452_BCD_CMD       (CH452_ADDR|((CH452_BCD&0x0f00)>>7))						// 设置BCD译码方式,可另加3位扫描极限
+#define CH452_TWINKLE_CMD   (CH452_ADDR|((CH452_TWINKLE&0x0f00)>>7))			            // 设置闪烁控制,需另加8位数据
+#define CH452_GET_KEY_CMD	(CH452_ADDR|((CH452_GET_KEY&0x0f00)>>7))						// 获取按键,返回按键代码
+#define CH452_DIG0_CMD      (CH452_ADDR|((CH452_DIG0&0x0f00)>>7))						// 数码管位0显示,需另加8位数据
+#define CH452_DIG1_CMD      (CH452_ADDR|((CH452_DIG1&0x0f00)>>7))			            // 数码管位1显示,需另加8位数据
+#define CH452_DIG2_CMD      (CH452_ADDR|((CH452_DIG2&0x0f00)>>7))			            // 数码管位2显示,需另加8位数据
 #define CH452_DIG3_CMD      (I2C0_ADDR|((CH452_DIG3&0x0f00)>>7))			            // 数码管位3显示,需另加8位数据
-#define CH452_DIG4_CMD      (I2C0_ADDR|((CH452_DIG4&0x0f00)>>7))			            // 数码管位4显示,需另加8位数据
-#define CH452_DIG5_CMD      (I2C0_ADDR|((CH452_DIG5&0x0f00)>>7))						// 数码管位5显示,需另加8位数据
-#define CH452_DIG6_CMD      (I2C0_ADDR|((CH452_DIG6&0x0f00)>>7))						// 数码管位6显示,需另加8位数据
-#define CH452_DIG7_CMD      (I2C0_ADDR|((CH452_DIG7&0x0f00)>>7))			            // 数码管位7显示,需另加8位数据
-#define CH452_ACK_CMD       (I2C0_ADDR|((CH452_ACK&0x0f00)>>7))			            // 2线接口ACK
+#define CH452_DIG4_CMD      (CH452_ADDR|((CH452_DIG4&0x0f00)>>7))			            // 数码管位4显示,需另加8位数据
+#define CH452_DIG5_CMD      (CH452_ADDR|((CH452_DIG5&0x0f00)>>7))						// 数码管位5显示,需另加8位数据
+#define CH452_DIG6_CMD      (CH452_ADDR|((CH452_DIG6&0x0f00)>>7))						// 数码管位6显示,需另加8位数据
+#define CH452_DIG7_CMD      (CH452_ADDR|((CH452_DIG7&0x0f00)>>7))			            // 数码管位7显示,需另加8位数据
+#define CH452_ACK_CMD       (CH452_ADDR|((CH452_ACK&0x0f00)>>7))			            // 2线接口ACK
 
 /* CH451和CH452的常用命令码 数据段*/
 #define CH452_NOP_DATA			0x00					// 空操作

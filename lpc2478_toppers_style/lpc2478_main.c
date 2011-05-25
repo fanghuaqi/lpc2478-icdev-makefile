@@ -16,12 +16,13 @@ int main()
 
     /*pll init*/
 	PLL_Init();
-    Buzzer_Init();
-    UART_Init(115200);
-    RTC_Init();
+    //Buzzer_Init();
+    //UART_Init(115200);
+    //RTC_Init();
     //pwm_init(PWM_CHANNEL_1,1000);
-    timer2_capinit();
-    EEPROM_Init(I2C_CHL1,EEPROM_CLK);
+    //timer2_capinit();
+    //EEPROM_Init(I2C_CHL1,EEPROM_CLK);
+    CH452_Init(CH452_CLK);
 	local_time.RTC_Sec = 00;
 	local_time.RTC_Min = 33;
 	local_time.RTC_Hour = 11;
