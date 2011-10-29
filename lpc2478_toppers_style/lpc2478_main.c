@@ -24,6 +24,7 @@ int main()
     LCD_OUT_DATA(0xff);
     LCD_Init();
 
+
     while(1)
     {
     	LCD_ClrScreen(i);
