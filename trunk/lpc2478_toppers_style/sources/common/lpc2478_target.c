@@ -8,7 +8,7 @@
  * 
  */
 
-#define DEFAULT_ISTKSZ  2048 /* 20KB 堆栈(SVC模式下)  */
+#define DEFAULT_ISTKSZ  4096 /* 20KB 堆栈(SVC模式下)  */
 
 static unsigned int intstack[DEFAULT_ISTKSZ];		/* interrupt stack */
 
