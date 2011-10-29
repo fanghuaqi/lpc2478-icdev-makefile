@@ -26,8 +26,8 @@
 #include  "target_rtc.h"
 #include  "target_timer.h"
 #include  "target_uart.h"
-#include  "target_i2c.h"
-#include  "target_i2c_cmd.h"
+//#include  "target_i2c.h"
+//#include  "target_i2c_cmd.h"
 #include  "target_lcd.h"
 #include  "target_lcd_code.h"
 

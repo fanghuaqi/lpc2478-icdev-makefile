@@ -94,7 +94,7 @@ extern void lcd_out_data(uint8_t data);
 #define LCD_R_W_LOW()     sil_wrw_mem((void *)FIO3PIN,(sil_rew_mem((void *)FIO3PIN)) & (~(1L<<15)) );  /*read or write signal low*/
 #define LCD_E_HIGH()      sil_wrw_mem((void *)FIO3PIN,(sil_rew_mem((void *)FIO3PIN)) | (1L<<14) );    /*Enable signal high*/
 #define LCD_E_LOW()       sil_wrw_mem((void *)FIO3PIN,(sil_rew_mem((void *)FIO3PIN)) & (~(1L<<14)) );   /*Enable signal low*/
-#define LCD_E_HIGH_LOW()  {LCD_E_HIGH();LCD_E_LOW();} /*E falling edge*/
+#define LCD_E_HIGH_LOW()  {LCD_E_HIGH();;LCD_E_LOW();} /*E falling edge*/
 #define LCD_IN_DATA()     lcd_in_data() /*the lcd data bus*/
 #define LCD_OUT_DATA(c)   lcd_out_data(c) /*output data on the data bus*/
 
