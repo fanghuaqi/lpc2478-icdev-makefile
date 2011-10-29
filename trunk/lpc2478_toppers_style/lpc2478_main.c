@@ -29,7 +29,7 @@ int main()
     {
     	LCD_ClrScreen(i);
     	i++;
-    	Delay_ms(10000);
+    	Delay_ms(1000);
     }
 
     return 0;
