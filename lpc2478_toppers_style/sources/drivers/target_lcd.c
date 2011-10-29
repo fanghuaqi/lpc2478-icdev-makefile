@@ -279,7 +279,7 @@ uint8_t LCD_Read_Status(void)
 	LCD_E_LOW();    			/*must pull low here*/
 	Delay_us(1);
 
-	return status;
+	return 0;
 }
 /** 
   
