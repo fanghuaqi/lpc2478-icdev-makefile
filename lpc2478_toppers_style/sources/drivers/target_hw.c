@@ -64,3 +64,11 @@ void Delay_ms(uint32_t ms)
 	}
 }
 
+void Delay_us(uint32_t us)
+{
+	volatile uint32_t i,k;
+	for(i=0;i<100;i++)
+	{
+		for(k=0;k<us;k++);
+	}
+}

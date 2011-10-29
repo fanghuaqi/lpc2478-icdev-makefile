@@ -6,7 +6,7 @@
 MEMORY
 {	
 	SRAM		: ORIGIN = 0x40000000, LENGTH  = 0x10000	/* 64KB */
-    SDRAM  		: ORIGIN = 0xA0000000, LENGTH  = 0x2000000 	/*  32Mbyte */
+    SDRAM  		: ORIGIN = 0xA0000000, LENGTH  = 0x4000000 	/*  64Mbyte */
 }
 
 OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm","elf32-littlearm") 

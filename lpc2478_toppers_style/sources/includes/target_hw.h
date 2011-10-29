@@ -21,4 +21,5 @@ extern void LED_Output(uint8_t ledvalue);
 extern void Buzzer_Init(void);
 extern void Buzzer(uint8_t buzzer);
 extern void Delay_ms(uint32_t ms);
+extern void Delay_us(uint32_t us);
 #endif
