@@ -35,7 +35,7 @@ void main(){
     //I2C_Master_WriteByte(I2C_CHL1, EEPROM_ADDR, CH452_ACK_DATA);
     CH452_Init();												/*init ch452 keyboard and led*/
     //I2CInit(40000);
-   // Delay_ms(10);
+    Delay_ms(10);
 	local_time.RTC_Sec = 59;
 	local_time.RTC_Min = 19;
 	local_time.RTC_Hour = 11;
