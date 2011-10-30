@@ -28,7 +28,7 @@ void timer2_capinit(void)
 	/*p0.4 as cap2*/
 	sil_wrw_mem((void *)PINSEL0,sil_rew_mem((void *)PINSEL0)|(0x3<<8));
 	/*prescale counter is 0*/
-	sil_wrw_mem((void *)T2PR,0x0);
+	sil_wrw_mem((void *)T2PR,72);
 	/*reset the interrupts*/
     sil_wrw_mem((void *)T2IR,0xff);
     /*disable and reset counter*/
@@ -57,7 +57,7 @@ void timer2_delayms(uint32_t ms)
 		start_dly_cnt = sil_rew_mem((void *)T2TC);
 		/*calculate timer2 count to delay and known that timer2 CLK=72Mhz
 		 * if timer2 clock is not 72Mhz please change the formula(公式) below*/
-		cnt_to_delay = ms * 1000 * 72;
+		cnt_to_delay = ms * 1000 ;
 		/*wait the counter passed the set counts*/
 		while(cnt_passed < cnt_to_delay){
 			cnt_passed = sil_rew_mem((void *)T2TC) - start_dly_cnt;

@@ -189,11 +189,11 @@ ERCD LCD_Write_CMD(uint8_t cmdcode)
 	LCD_RS_LOW();                   /*when RS=0 R/W=0,cmd write the data bus*/
 	//LCD_E_LOW();
 	LCD_R_W_LOW();
-	Delay_us(10);
+	Delay_us(6);
 
 	LCD_E_HIGH();
     LCD_OUT_DATA(cmdcode);          /*output cmd  on the bus*/
-    Delay_us(5);
+    Delay_us(6);
 
     LCD_E_LOW();//LCD_E_HIGH_LOW();               /*when E high->low data appear on the bus*/
     //Delay_us(1);
@@ -216,11 +216,11 @@ ERCD LCD_Write_Char(uint8_t char_data)
 	LCD_RS_HIGH();                  /*when RS=1 R/W=0,cmd write the data bus*/
 	//LCD_E_LOW();
 	LCD_R_W_LOW();
-	Delay_us(10);
+	Delay_us(6);
 
 	LCD_E_HIGH();
     LCD_OUT_DATA(char_data);        /*output data on the bus*/
-    Delay_us(5);
+    Delay_us(6);
 
     LCD_E_LOW();//LCD_E_HIGH_LOW();               /*when E high->low(falling edge) data appear on the bus*/
     //Delay_us(1);
@@ -249,7 +249,7 @@ uint8_t LCD_Read_Char(void)
     data_read = LCD_IN_DATA();       /*in data on the bus*/
     Delay_us(1);
     LCD_E_LOW();
-    Delay_us(1);
+    //Delay_us(1);
 	_nop_();
 	_nop_();
 	_nop_();
@@ -497,6 +497,7 @@ ERCD LCD_ClrScreen(uint8_t char_code)
 	for(k=0;k<4;k++)
 	{
 		LCD_Chip_Select(k);
+
 		for(j=0;j<8;j++)
 		{
 			LCD_Write_CMD(LCD_SET_X_ADDRESS|j);
@@ -505,6 +506,7 @@ ERCD LCD_ClrScreen(uint8_t char_code)
 				LCD_Write_Char(char_code);
 		}
 	}
+	LCD_Write_CMD(LCD_DISPLAY_ON);
 	//LCD_Locate(0,0);
 	return ERCD_OK;
 }
