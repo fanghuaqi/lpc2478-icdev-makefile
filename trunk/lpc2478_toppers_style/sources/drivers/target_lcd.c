@@ -184,12 +184,19 @@ ERCD LCD_IO_Init(void)
  */
 ERCD LCD_Write_CMD(uint8_t cmdcode)
 {
-    while(LCD_Read_Status() & 0x90);
+    //while(LCD_Read_Status() & 0x90);
 
 	LCD_RS_LOW();                   /*when RS=0 R/W=0,cmd write the data bus*/
-    LCD_R_W_LOW();
+	//LCD_E_LOW();
+	LCD_R_W_LOW();
+	Delay_us(10);
+
+	LCD_E_HIGH();
     LCD_OUT_DATA(cmdcode);          /*output cmd  on the bus*/
-    LCD_E_HIGH_LOW();               /*when E high->low data appear on the bus*/
+    Delay_us(5);
+
+    LCD_E_LOW();//LCD_E_HIGH_LOW();               /*when E high->low data appear on the bus*/
+    //Delay_us(1);
 	_nop_();
 	_nop_();
 	_nop_();
@@ -204,13 +211,19 @@ ERCD LCD_Write_CMD(uint8_t cmdcode)
  */
 ERCD LCD_Write_Char(uint8_t char_data)
 {
-    while(LCD_Read_Status() & 0x90);
+    //while(LCD_Read_Status() & 0x90);
 	//LCD_E_LOW();
 	LCD_RS_HIGH();                  /*when RS=1 R/W=0,cmd write the data bus*/
-    LCD_R_W_LOW();
+	//LCD_E_LOW();
+	LCD_R_W_LOW();
+	Delay_us(10);
+
+	LCD_E_HIGH();
     LCD_OUT_DATA(char_data);        /*output data on the bus*/
-    //
-    LCD_E_HIGH_LOW();               /*when E high->low(falling edge) data appear on the bus*/
+    Delay_us(5);
+
+    LCD_E_LOW();//LCD_E_HIGH_LOW();               /*when E high->low(falling edge) data appear on the bus*/
+    //Delay_us(1);
 	_nop_();
 	_nop_();
 	_nop_();
@@ -228,10 +241,15 @@ uint8_t LCD_Read_Char(void)
     while(LCD_Read_Status() & 0x90);
     /*when read data ,a dummy read is needed*/
     LCD_RS_HIGH();                   /*when RS=1 R/W=1,read data from the displayram*/
+    LCD_E_LOW();
     LCD_R_W_HIGH();
+    Delay_us(1);
+
 	LCD_E_HIGH();                    /*when E=1 and device is selected data appear*/
     data_read = LCD_IN_DATA();       /*in data on the bus*/
+    Delay_us(1);
     LCD_E_LOW();
+    Delay_us(1);
 	_nop_();
 	_nop_();
 	_nop_();
@@ -247,16 +265,22 @@ uint8_t LCD_Read_Status(void)
 {
     uint8_t status;
     /*when read status ,a dummy read is not needed*/
-	//LCD_OUT_DATA(0x00);///不加这个也可以的
-	_nop_();
-	_nop_();
+//	LCD_OUT_DATA(0x00);
+//	_nop_();
+//	_nop_();
+
     LCD_RS_LOW();                  /*when RS=0 R/W=1,read status ofthe l*/
+    LCD_E_LOW();
     LCD_R_W_HIGH();
+    Delay_us(1);
+
 	LCD_E_HIGH();                   /*when E=1 and device is selecte dat ppear*/
     status= LCD_IN_DATA();         /*n data on the bus*/
+    Delay_us(1);
 	LCD_E_LOW();    			/*must pull low here*/
+	Delay_us(1);
 
-	return status;
+	return 0;
 }
 /** 
   
