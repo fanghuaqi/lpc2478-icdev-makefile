@@ -18,7 +18,7 @@
 #define	I2C_CHL0	0
 #define I2C_CHL1 	1
 #define I2C_CHL2 	2
-#define CH452_CHL   I2C_CHL0
+#define CH452_CHL   I2C_CHL2
 /*channel clk definitions*/
 #define	I2C0_CLK	4000
 #define I2C1_CLK 	4000

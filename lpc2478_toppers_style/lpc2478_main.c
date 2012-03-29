@@ -21,6 +21,7 @@ int main()
 	PLL_Init();
     UART_Init(115200);
     timer2_capinit();
+    CH452_Init(CH452_CLK);
 
 	//sil_wrw_mem((void *)SCS,0x3);/* EMC reset disable*/
 	//while(sil_rew_mem((void *)EMC_STAT)&0x1);
@@ -31,7 +32,7 @@ int main()
 //	Delay_ms(1000);
 //	sil_wrw_mem((void *)PINMODE6,0x00000000);
 
-	LCD_IO_Init();
+	//LCD_IO_Init();
 
 //    LCD_CHIP_SEL_0();
 //    LCD_OUT_DATA(0x00);
@@ -39,26 +40,27 @@ int main()
 //	LCD_RS_LOW();
 //	LCD_R_W_LOW();
 //	LCD_E_LOW();
-    LCD_Init();
+    //LCD_Init();
 
 
     //UART_Printf("Flush Screen Test Start\n");
     //timer2_delayms(3000);
     while(1)
     {
-    	sil_wrw_mem((void *)T2TCR,0x02);
-    	sil_wrw_mem((void *)T2TCR,0x01);
-    	start_dly_cnt = sil_rew_mem((void *)T2TC);
-    	LCD_ClrScreen(i);
-    	cnt_passed = sil_rew_mem((void *)T2TC) - start_dly_cnt;
-    	cnt_to_delay[i/4] += cnt_passed;
-    	if ((!(i%4))&&(i!=0)){
-    		cnt_to_delay[i/4-1] = cnt_to_delay[i/4-1] / 4;
-    	}
-    	if (i==255){
-    		cnt_to_delay[i/4] = cnt_to_delay[i/4] / 4;
-    	}
-
+//    	sil_wrw_mem((void *)T2TCR,0x02);
+//    	sil_wrw_mem((void *)T2TCR,0x01);
+//    	start_dly_cnt = sil_rew_mem((void *)T2TC);
+//    	LCD_ClrScreen(i);
+//    	cnt_passed = sil_rew_mem((void *)T2TC) - start_dly_cnt;
+//    	cnt_to_delay[i/4] += cnt_passed;
+//    	if ((!(i%4))&&(i!=0)){
+//    		cnt_to_delay[i/4-1] = cnt_to_delay[i/4-1] / 4;
+//    	}
+//    	if (i==255){
+//    		cnt_to_delay[i/4] = cnt_to_delay[i/4] / 4;
+//    	}
+    	i = (i>15)?0:i;
+    	CH452_LED_OPEN(1<<i,1);
     	//UART_Printf("Use %d to FLush Screen Used:%ld\n",i,cnt_passed);
     	/*LCD_RST_LOW();
     	LCD_RS_HIGH();
